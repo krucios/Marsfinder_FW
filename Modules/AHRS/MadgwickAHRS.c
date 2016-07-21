@@ -18,11 +18,13 @@
 #include "MadgwickAHRS.h"
 #include <math.h>
 
+#include <Modules/Time/timer.h>
+
 //---------------------------------------------------------------------------------------------------
 // Definitions
 
-#define sampleFreq  20.0f       // sample frequency in Hz
-#define betaDef     0.1f        // 2 * proportional gain
+#define sampleFreq  (MSS_TIM1_FREQ * 1.0f)                       // sample frequency in Hz
+#define betaDef     (M_PI * (5.0f / 180.0f) * 0.86602540378f)    // 2 * proportional gain (sqrt(3)/2)
 
 //---------------------------------------------------------------------------------------------------
 // Variable definitions

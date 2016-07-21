@@ -55,7 +55,7 @@ i2c_status_t i2c_writeBits(
         uint8_t data) {
     //    010   : value to write
     // 76543210 : bit numbers
-    //    xxx   : args: bitStart=4, length=3
+    //    ***   : args: bitStart=4, length=3
     // 00011100 : mask byte
     // 10101111 : original value (sample)
     // 10100011 : original & ~mask
