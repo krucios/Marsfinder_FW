@@ -1,5 +1,7 @@
 #include "mpu6050.h"
 
+#include <math.h>
+
 static uint8_t cur_gyro_range;
 static uint8_t cur_accel_range;
 
@@ -21,6 +23,99 @@ void MPU6050_init() {
     MPU6050_setDLPFMode(MPU6050_DLPF_BW_42);
 
     MPU6050_calibration();
+}
+
+uint8_t MPU6050_selfTest() {
+    int16_t i;
+    uint8_t retcode = 0;
+
+    uint8_t a_test  [3]; // X Y Z accel test values
+    int16_t a_s     [3]; //       accel values with self test
+    int16_t a       [3]; //       accle values without self test
+    int16_t a_str   [3]; //       accel self test response
+    float   ft_a    [3]; //       accel factory trim value
+    float   ch_a    [3]; //       accel change from factory trim
+
+    uint8_t g_test  [3]; // X Y Z gyro test values
+    int16_t g_s     [3]; //       gyro values with self test
+    int16_t g       [3]; //       gyro values without self test
+    int16_t g_str   [3]; //       gyro self test response
+    float   ft_g    [3]; //       gyro factory trim value
+    float   ch_g    [3]; //       gyro change from factory trim
+
+    uint8_t prev_gyro_range = cur_gyro_range;
+    uint8_t prev_accel_range = cur_accel_range;
+
+    MPU6050_setFullScaleGyroRange(MPU6050_GYRO_FS_250);
+    MPU6050_setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
+
+    uint8_t buff[4];
+    buff[0] = MPU6050_SELF_TEST_X;
+
+    /*-------------------------------*
+     * Read SelfTest registers 13-16
+     *-------------------------------*/
+    i2c_writeBytes(MPU6050_ADDRESS, buff, 1); // Send start address
+    i2c_readBytes(MPU6050_ADDRESS, buff, 4);  // Read all 4 self test registers
+
+    a_test[0] = ((buff[0] & 0b1110000) >> 3) + ((buff[3] & 00110000) >> 4);
+    a_test[1] = ((buff[1] & 0b1110000) >> 3) + ((buff[3] & 00001100) >> 2);
+    a_test[2] = ((buff[2] & 0b1110000) >> 3) +  (buff[3] & 00000011);
+
+    for (i = 0; i < 3; i++) {
+        g_test[i] = buff[i] & 0b00011111;
+    }
+
+    /*------------------------------*
+     * Calculate Factory Trim Value
+     *------------------------------*/
+    for (i = 0; i < 3; i++) {
+        if (a_test[i]) {
+            ft_a[i] = 4096 * 0.34 * powf(0.92 / 0.34, (a_test[i] - 1) / 30.0);
+        } else ft_a[i] = 0.0;
+        if (g_test[i]) {
+            ft_g[i] = 25 * 131 * powf(1.046, (float)(g_test[i] - 1));
+        } else ft_g[i] = 0.0;
+    }
+
+    /*------------------------------*
+     * Enable self test
+     *------------------------------*/
+    i2c_writeBits(MPU6050_ADDRESS, MPU6050_RA_ACCEL_CONFIG, 7, 3, 0b111);
+    i2c_writeBits(MPU6050_ADDRESS, MPU6050_RA_GYRO_CONFIG, 7, 3, 0b111);
+
+    MPU6050_getRawData(&a_s[0], &a_s[1], &a_s[2], &g_s[0], &g_s[1], &g_s[2], &i);
+
+    /*------------------------------*
+     * Disable self test
+     *------------------------------*/
+    i2c_writeBits(MPU6050_ADDRESS, MPU6050_RA_ACCEL_CONFIG, 7, 3, 0b111);
+    i2c_writeBits(MPU6050_ADDRESS, MPU6050_RA_GYRO_CONFIG, 7, 3, 0b111);
+
+    MPU6050_getRawData(&a[0], &a[1], &a[2], &g[0], &g[1], &g[2], &i);
+
+    /*------------------------------*
+     * Calculate change from factory trim
+     *------------------------------*/
+    for (i = 0; i < 3; i++) {
+        a_str[i] = a_s[i] - a[i];
+        ch_a[i] = (a_str[i] - ft_a[i]) / ft_a[i];
+        if (ch_a[i] <= MPU6050_ACCEL_SELF_TEST_RESPONSE_MIN ||
+            ch_a[i] >  MPU6050_ACCEL_SELF_TEST_RESPONSE_MAX) {
+            retcode = 1;
+        }
+        g_str[i] = g_s[i] - g[i];
+        ch_g[i] = (g_str[i] - ft_g[i]) / ft_g[i];
+        if (ch_g[i] <= MPU6050_GYRO_SELF_TEST_RESPONSE_MIN ||
+            ch_g[i] >  MPU6050_GYRO_SELF_TEST_RESPONSE_MAX) {
+            retcode = 2;
+        }
+    }
+
+    MPU6050_setFullScaleGyroRange(prev_gyro_range);
+    MPU6050_setFullScaleAccelRange(prev_accel_range);
+
+    return retcode;
 }
 
 void MPU6050_setClockSource(uint8_t source) {
@@ -52,25 +147,7 @@ void MPU6050_setSleepEnabled(uint8_t enabled) {
     MPU6050_PWR1_SLEEP_BIT, enabled);
 }
 
-/*
- * Just for accessing HMC from MC
- * data got from http://forum.arduino.cc/index.php?topic=223345.msg2142479#msg2142479
- */
 void MPU6050_setBypassMode(uint8_t enabled) {
-    /*
-     uint8_t tx_len = 2;
-     uint8_t tx_buf[tx_len];
-
-     tx_buf[0] = 0x37; // register address
-     tx_buf[1] = 0x02; // needed value
-
-     i2c_writeBytes(MPU6050_ADDRESS, tx_buf, tx_len);
-
-     tx_buf[0] = 0x6A; // register address
-     tx_buf[1] = 0x00; // needed value
-
-     i2c_writeBytes(MPU6050_ADDRESS, tx_buf, tx_len);
-     */
     i2c_writeBit(MPU6050_ADDRESS,
     MPU6050_RA_INT_PIN_CFG,
     MPU6050_INTCFG_I2C_BYPASS_EN_BIT, enabled);
@@ -152,8 +229,6 @@ void MPU6050_getData(int16_t* ax, int16_t* ay, int16_t* az,
     *gx = (int16_t) - (((rx_buf[10]) << 8) | rx_buf[11]);
     *gy = (int16_t) - (((rx_buf[8])  << 8) | rx_buf[9]);
     *gz = (int16_t) - (((rx_buf[12]) << 8) | rx_buf[13]);
-
-    // Because of wrong assembled sensor
 
     if (USE_CALIBRATED_MASK & CALIBRATED_ACCX)  {*ax -= c_ax;}
     if (USE_CALIBRATED_MASK & CALIBRATED_ACCY)  {*ay -= c_ay;}

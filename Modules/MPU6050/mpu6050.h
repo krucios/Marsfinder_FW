@@ -27,6 +27,10 @@
 #define MPU6050_RA_YA_OFFS_L_TC     0x09
 #define MPU6050_RA_ZA_OFFS_H        0x0A //[15:0] ZA_OFFS
 #define MPU6050_RA_ZA_OFFS_L_TC     0x0B
+#define MPU6050_SELF_TEST_X         0x0D
+#define MPU6050_SELF_TEST_Y         0x0E
+#define MPU6050_SELF_TEST_Z         0x0F
+#define MPU6050_SELF_TEST_A         0x10
 #define MPU6050_RA_XG_OFFS_USRH     0x13 //[15:0] XG_OFFS_USR
 #define MPU6050_RA_XG_OFFS_USRL     0x14
 #define MPU6050_RA_YG_OFFS_USRH     0x15 //[15:0] YG_OFFS_USR
@@ -361,6 +365,12 @@
 
 #define G_CONST 9.8f
 
+#define MPU6050_ACCEL_SELF_TEST_RESPONSE_MIN    -0.14f
+#define MPU6050_ACCEL_SELF_TEST_RESPONSE_MAX     0.14f
+
+#define MPU6050_GYRO_SELF_TEST_RESPONSE_MIN     -0.14f
+#define MPU6050_GYRO_SELF_TEST_RESPONSE_MAX      0.14f
+
 #define MPU_CALIBRATION_SAMPLES_COUNT 1000
 #define CALIBRATED_ACCX     1
 #define CALIBRATED_ACCY     2
@@ -374,6 +384,8 @@
 
 void MPU6050_init();
 void MPU6050_calibration();
+
+uint8_t MPU6050_selfTest();
 
 void MPU6050_setClockSource(uint8_t source);
 void MPU6050_setFullScaleGyroRange(uint8_t range);

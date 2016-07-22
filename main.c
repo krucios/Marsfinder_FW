@@ -14,17 +14,17 @@
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/MAVLink/handlers.h>
 #include <Modules/MAVLink/system.h>
-#include <Modules/AHRS/MadgwickAHRS.h>
 #include <Modules/Parameters_Holder/param_holder.h>
 
 #include <Helpers/sys_helper/sys_helper.h>
-#include <Helpers/conversion_defines.h>
 
 #include <hal.h>
 #include <MC_hw_platform.h>
 #include <m2sxxx.h>
 
 #include <stdio.h>
+
+#include "defines.h"
 
 void setup(void);
 
@@ -39,7 +39,7 @@ int main(void) {
 
     while (1) {
         delay(1000);
-
+#ifdef MPU6050_ENABLED
         MPU6050_getScaledData(&params.param[PARAM_AX],
                               &params.param[PARAM_AY],
                               &params.param[PARAM_AZ],
@@ -47,11 +47,12 @@ int main(void) {
                               &params.param[PARAM_GY],
                               &params.param[PARAM_GZ],
                               &params.param[PARAM_T]);
-/* HMC isn't working now
+#endif // MPU6050_ENABLED
+#ifdef HMC_ENABLED
         HMC_get_scaled_Data(&params.param[PARAM_MX],
                             &params.param[PARAM_MY],
                             &params.param[PARAM_MZ]);
-*/
+#endif // HMC_ENABLED
         if (BT_get_rx(&rx_c, 1)) {
             if (mavlink_parse_char(MAVLINK_COMM_0, rx_c, &msg, &status)) {
                 handle_mavlink_message(&msg);
@@ -67,8 +68,23 @@ void setup() {
     uart_init();
     i2c_init();
     mavlink_sys_update(MAV_MODE_AUTO_ARMED, MAV_STATE_STANDBY);
+#ifdef MPU6050_ENABLED
     MPU6050_init();
-    // HMC_init();
+    if (!MPU6050_selfTest()) {
+        mavlink_message_t msg;
+
+        mavlink_msg_statustext_pack(
+                mavlink_system.sysid,
+                mavlink_system.compid,
+                &msg,
+                MAV_SEVERITY_CRITICAL,
+                "MPU6050 SELFTEST FAILED");
+        mavlink_send_msg(&msg);
+    }
+#endif // MPU6050_ENABLED
+#ifdef HMC_ENABLED
+    HMC_init();
+#endif // HMC_ENABLED
 }
 
 
