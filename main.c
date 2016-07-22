@@ -70,9 +70,11 @@ void setup() {
     mavlink_sys_update(MAV_MODE_AUTO_ARMED, MAV_STATE_STANDBY);
 #ifdef MPU6050_ENABLED
     MPU6050_init();
+#ifdef MPU6050_SELFTEST
     if (!MPU6050_selfTest()) {
         mavlink_message_t msg;
 
+        // TODO retcode into msg
         mavlink_msg_statustext_pack(
                 mavlink_system.sysid,
                 mavlink_system.compid,
@@ -81,9 +83,24 @@ void setup() {
                 "MPU6050 SELFTEST FAILED");
         mavlink_send_msg(&msg);
     }
+#endif // MPU6050_SELFTEST
 #endif // MPU6050_ENABLED
 #ifdef HMC_ENABLED
     HMC_init();
+#ifdef HMC_SELFTEST
+    if (!HMC_self_test()) {
+        mavlink_message_t msg;
+
+        // TODO retcode into msg
+        mavlink_msg_statustext_pack(
+                mavlink_system.sysid,
+                mavlink_system.compid,
+                &msg,
+                MAV_SEVERITY_CRITICAL,
+                "HMC SELFTEST FAILED");
+        mavlink_send_msg(&msg);
+    }
+#endif // HMC_SELFTEST
 #endif // HMC_ENABLED
 }
 
