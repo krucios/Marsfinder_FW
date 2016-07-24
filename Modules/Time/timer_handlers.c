@@ -7,6 +7,7 @@
 
 #include "time.h"
 #include "timer.h"
+#include "defines.h"
 
 #include <Helpers/conversion_defines.h>
 
@@ -14,6 +15,8 @@
 #include <Modules/Parameters_Holder/param_holder.h>
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/AHRS/MadgwickAHRS.h>
+#include <Modules/MPU6050/mpu6050.h>
+#include <Modules/HMC/hmc.h>
 
 /*------------------------------------------------------------------------------
  * Service the I2C timeout functionality.
@@ -133,4 +136,26 @@ void Timer1_IRQHandler() {
     usec_service_routine();
 
     MSS_TIM1_clear_irq();
+}
+
+
+/*-------------------------------------
+ * Read values from sensors
+ */
+void Timer2_IRQHandler() {
+#ifdef MPU6050_ENABLED
+    MPU6050_getScaledData(&params.param[PARAM_AX],
+                          &params.param[PARAM_AY],
+                          &params.param[PARAM_AZ],
+                          &params.param[PARAM_GX],
+                          &params.param[PARAM_GY],
+                          &params.param[PARAM_GZ],
+                          &params.param[PARAM_T]);
+#endif // MPU6050_ENABLED
+#ifdef HMC_ENABLED
+    HMC_get_scaled_Data(&params.param[PARAM_MX],
+                        &params.param[PARAM_MY],
+                        &params.param[PARAM_MZ]);
+#endif // HMC_ENABLED
+    MSS_TIM2_clear_irq();
 }

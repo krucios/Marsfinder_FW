@@ -22,9 +22,7 @@
 #include <MC_hw_platform.h>
 #include <m2sxxx.h>
 
-#include <stdio.h>
-
-#include "defines.h"
+#include <defines.h>
 
 void setup(void);
 
@@ -39,20 +37,6 @@ int main(void) {
 
     while (1) {
         delay(1000);
-#ifdef MPU6050_ENABLED
-        MPU6050_getScaledData(&params.param[PARAM_AX],
-                              &params.param[PARAM_AY],
-                              &params.param[PARAM_AZ],
-                              &params.param[PARAM_GX],
-                              &params.param[PARAM_GY],
-                              &params.param[PARAM_GZ],
-                              &params.param[PARAM_T]);
-#endif // MPU6050_ENABLED
-#ifdef HMC_ENABLED
-        HMC_get_scaled_Data(&params.param[PARAM_MX],
-                            &params.param[PARAM_MY],
-                            &params.param[PARAM_MZ]);
-#endif // HMC_ENABLED
         if (BT_get_rx(&rx_c, 1)) {
             if (mavlink_parse_char(MAVLINK_COMM_0, rx_c, &msg, &status)) {
                 handle_mavlink_message(&msg);
@@ -68,6 +52,7 @@ void setup() {
     uart_init();
     i2c_init();
     mavlink_sys_update(MAV_MODE_AUTO_ARMED, MAV_STATE_STANDBY);
+    timer_mss1_start();
 #ifdef MPU6050_ENABLED
     MPU6050_init();
 #ifdef MPU6050_SELFTEST
@@ -84,6 +69,7 @@ void setup() {
         mavlink_send_msg(&msg);
     }
 #endif // MPU6050_SELFTEST
+    MPU6050_calibration();
 #endif // MPU6050_ENABLED
 #ifdef HMC_ENABLED
     HMC_init();
@@ -102,6 +88,7 @@ void setup() {
     }
 #endif // HMC_SELFTEST
 #endif // HMC_ENABLED
+    timer_mss2_start();
 }
 
 
