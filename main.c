@@ -37,6 +37,21 @@ int main(void) {
 
     while (1) {
         delay(1000);
+#ifdef MPU6050_ENABLED
+        MPU6050_getScaledData(&params.param[PARAM_AX],
+                              &params.param[PARAM_AY],
+                              &params.param[PARAM_AZ],
+                              &params.param[PARAM_GX],
+                              &params.param[PARAM_GY],
+                              &params.param[PARAM_GZ],
+                              &params.param[PARAM_T]);
+#endif // MPU6050_ENABLED
+#ifdef HMC_ENABLED
+        HMC_get_scaled_Data(&params.param[PARAM_MX],
+                            &params.param[PARAM_MY],
+                            &params.param[PARAM_MZ]);
+#endif // HMC_ENABLED
+
         if (BT_get_rx(&rx_c, 1)) {
             if (mavlink_parse_char(MAVLINK_COMM_0, rx_c, &msg, &status)) {
                 handle_mavlink_message(&msg);
@@ -56,7 +71,7 @@ void setup() {
 #ifdef MPU6050_ENABLED
     MPU6050_init();
 #ifdef MPU6050_SELFTEST
-    if (!MPU6050_selfTest()) {
+    if (MPU6050_selfTest()) {
         mavlink_message_t msg;
 
         // TODO retcode into msg
@@ -74,7 +89,7 @@ void setup() {
 #ifdef HMC_ENABLED
     HMC_init();
 #ifdef HMC_SELFTEST
-    if (!HMC_self_test()) {
+    if (HMC_self_test()) {
         mavlink_message_t msg;
 
         // TODO retcode into msg
