@@ -1,4 +1,4 @@
-# Astraeus
+# Marsfinder
 The Microsemi SmartFusion2 projects for Rover
 
 ## Участники
