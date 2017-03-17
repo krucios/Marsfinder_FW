@@ -11,9 +11,10 @@
 #include <drivers_config/sys_config/sys_config.h>
 #include <drivers/mss_timer/mss_timer.h>
 
-#define MSS_TIM1_FREQ         20    // in Hz
-#define MSS_TIM2_FREQ         200   // in Hz
-#define MSS_SYS_TIM_FFREQ     100   // in Hz
+#define MSS_TIM1_FREQ           (20u)    // in Hz
+#define MSS_TIM2_FREQ           (200u)   // in Hz
+#define MSS_SYS_TIM_FFREQ       (100u)   // in Hz
+#define MSS_SYS_M3_CLK_FREQ_MHZ (MSS_SYS_M3_CLK_FREQ / 1000000u)
 
 #define TIMER_PERIOD(freq)    (MSS_SYS_M3_CLK_FREQ / (freq))
 
