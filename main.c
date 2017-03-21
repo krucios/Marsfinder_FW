@@ -5,6 +5,7 @@
  *      Author: kruci_000
  */
 
+#include <Modules/Rover_Control/rover_control.h>
 #include <Modules/Time/time.h>
 #include <Modules/Time/timer.h>
 #include <Modules/UART/uart.h>
@@ -63,6 +64,7 @@ int main(void) {
 }
 
 void setup() {
+    Rover_init();
     timers_init();
     uart_init();
     i2c_init();

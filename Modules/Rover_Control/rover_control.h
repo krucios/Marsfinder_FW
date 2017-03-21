@@ -16,11 +16,11 @@
 #define PWM_MAX PWM_PERIOD
 
 typedef enum {
-	FORWARD,
-	BACKWARD,
-	ROUND_LEFT,
-	ROUND_RIGHT,
-	STOP
+    FORWARD,
+    BACKWARD,
+    ROUND_LEFT,
+    ROUND_RIGHT,
+    STOP
 } RoverDirections;
 
 void Rover_init();
