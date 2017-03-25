@@ -10,6 +10,7 @@
 
 #include "common/mavlink.h"
 #include "mavlink_helpers.h"
+#include "handlers/mavlink_cmd_user_1_handler.h"
 
 #include <Modules/UART/uart.h>
 #include <Modules/Parameters_Holder/param_holder.h>
@@ -29,6 +30,9 @@ void handle_mavlink_message(mavlink_message_t* msg) {
 
         if (is_sys_comp_match(cmd.target_system, cmd.target_component)) {
             switch (cmd.command) {
+            case MAV_CMD_USER_1: {
+                handle_mavlink_user_1_cmd(&cmd);
+            } break;
             default: {
                     mavlink_message_t msg;
                     uint8_t buff[50];
