@@ -6,21 +6,37 @@
  */
 
 #include "rover_control.h"
+#include <CMSIS/m2sxxx.h>
 
-// FIXME: include PWM drivers
 pwm_instance_t  g_pwm;
 pwm_id_t pwms[8]= {PWM_1, PWM_2, PWM_3, PWM_4, PWM_5, PWM_6, PWM_7, PWM_8};
 
+pwm_tach_id_t interrupted_tach;
 
 void Rover_init() {
     uint32_t i;
 
-    PWM_init(&g_pwm, COREPWM_0_0, PWM_PRESCALE, PWM_PERIOD); // FIXME: correct PWM base addr
+    PWM_init(&g_pwm, COREPWM_0_0, PWM_PRESCALE, PWM_PERIOD);
+    PWM_tach_init(&g_pwm, TACH_PRESCALE_PCLK_DIV_2048);
+    PWM_tach_set_mode(&g_pwm, PWM_TACH_1, TACH_CONTINUOUS);
+    PWM_tach_set_mode(&g_pwm, PWM_TACH_2, TACH_CONTINUOUS);
 
     for (i = 0; i < 8; i++)
         PWM_enable(&g_pwm, pwms[i]);
 
     Rover_go(STOP);
+
+    PWM_tach_clear_status(&g_pwm, PWM_TACH_1);
+    PWM_tach_clear_status(&g_pwm, PWM_TACH_2);
+
+    PWM_tach_enable_irq(&g_pwm, PWM_TACH_1);
+    PWM_tach_enable_irq(&g_pwm, PWM_TACH_2);
+
+    /* Clear interrupt */
+    NVIC_ClearPendingIRQ(FabricIrq0_IRQn);
+
+    /* Enable Interrupt IRQ0 */
+    NVIC_EnableIRQ(FabricIrq0_IRQn);
 }
 
 void Rover_go(const RoverDirections dir) {
@@ -56,5 +72,19 @@ void Rover_go(const RoverDirections dir) {
                 PWM_set_duty_cycle(&g_pwm, pwms[i], 0);
             break;
         }
+    }
+}
+
+void PWM_tach_IRQHandler(void) {
+    uint32_t tach_value;
+
+    interrupted_tach = PWM_tach_get_irq_source(&g_pwm);
+
+    if (interrupted_tach != PWM_TACH_INVALID) {
+        tach_value = PWM_tach_read_value(&g_pwm, interrupted_tach);
+
+        PWM_tach_clear_irq(&g_pwm, interrupted_tach);
+        /* Clear the interrupt in the Cortex-M3 NVIC */
+        NVIC_ClearPendingIRQ(FabricIrq0_IRQn);
     }
 }

@@ -12,6 +12,7 @@
 #include <Helpers/conversion_defines.h>
 
 #include <Modules/I2C/i2c.h>
+#include <Modules/Rover_Control/rover_control.h>
 #include <Modules/Parameters_Holder/param_holder.h>
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/AHRS/MadgwickAHRS.h>
@@ -26,6 +27,7 @@ void SysTick_Handler(void) {
 }
 void FabricIrq0_IRQHandler(void) {
     I2C_isr(&g_core_i2c);
+    PWM_tach_IRQHandler();
 }
 
 /*-----------------------------------------------------------------------------

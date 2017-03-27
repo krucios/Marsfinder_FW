@@ -23,7 +23,11 @@ typedef enum {
     STOP
 } RoverDirections;
 
+extern pwm_tach_id_t interrupted_tach;
+
 void Rover_init();
 void Rover_go(const RoverDirections dir);
+
+void PWM_tach_IRQHandler(void);
 
 #endif /* ROVER_CONTROL_H_ */
