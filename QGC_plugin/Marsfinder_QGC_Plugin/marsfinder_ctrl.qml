@@ -33,6 +33,58 @@ FactPanel {
 
     Column {
         spacing: 5
+        focus: true
+
+        property int dir_FB: 0
+        property int dir_LR: 0
+
+        Keys.onUpPressed: {
+            if (dir_FB < 1) {
+                dir_FB = dir_FB + 1
+                console.log('Up pressed: ' + dir_FB)
+                if (dir_FB) {
+                    controller.sendCommand(31010,0, 0, 0, 0, 0, 0, 0, 0, 0) // Forward
+                } else {
+                    controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
+                }
+            }
+        }
+        Keys.onDownPressed: {
+            if (dir_FB > -1) {
+                dir_FB = dir_FB - 1
+                console.log('Down pressed: ' + dir_FB)
+                if (dir_FB == -1) {
+                    controller.sendCommand(31010,0, 0, 1, 0, 0, 0, 0, 0, 0) // Backward
+                } else {
+                    controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
+                }
+            }
+
+        }
+        Keys.onLeftPressed: {
+            if (dir_LR < 1) {
+                dir_LR = dir_LR + 1
+                console.log('Left pressed: ' + dir_LR)
+                if (dir_LR) {
+                    controller.sendCommand(31010,0, 0, 2, 0, 0, 0, 0, 0, 0) // Left
+                } else {
+                    controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
+                }
+            }
+
+        }
+        Keys.onRightPressed: {
+            if (dir_LR > -1) {
+                dir_LR = dir_LR - 1
+                console.log('Right pressed: ' + dir_LR)
+                if (dir_LR == -1) {
+                    controller.sendCommand(31010,0, 0, 3, 0, 0, 0, 0, 0, 0) // Right
+                } else {
+                    controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
+                }
+            }
+
+        }
         // The QGCButton control is provided by QGroundControl.Controls. It is a wrapper around
         // the standard Qml Button element which using the default QGC font and color palette.
 
