@@ -7,7 +7,7 @@
 
 void handle_mavlink_user_1_cmd(mavlink_command_long_t* cmd) {
     uint8_t dir = cmd->param1;
-    Rover_go((RoverDirections)dir);
+    Rover_go((Rover_direction)dir);
 }
 
 #endif // MAVLINK_CMD_USER_1_HANDLER

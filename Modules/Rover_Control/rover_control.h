@@ -15,7 +15,7 @@
 #define PWM_PERIOD          (1000)
 #define PWM_MAX PWM_PERIOD
 
-#define MM_PER_WHEEL_TICK (-1) // TODO: place here actual value
+#define SM_PER_WHEEL_TICK (1u)
 
 typedef enum {
     FORWARD,
@@ -23,7 +23,7 @@ typedef enum {
     ROUND_LEFT,
     ROUND_RIGHT,
     STOP
-} RoverDirections;
+} Rover_direction;
 
 /**
  *
@@ -43,7 +43,8 @@ typedef struct {
 extern Rover_distance_t rover_dist;
 
 void Rover_init();
-void Rover_go(const RoverDirections dir);
+void Rover_go(const Rover_direction dir);
+void Rover_move(const Rover_direction dir, const uint32_t sm);
 
 void PWM_tach_IRQHandler(void);
 
