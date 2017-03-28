@@ -12,8 +12,7 @@
 #include <Modules/MAVLink/system.h>
 #include <Modules/UART/uart.h>
 
-#define ONBOARD_PARAM_COUNT 11
-#define ONBOARD_PARAM_NAME_LENGTH 7
+#define ONBOARD_PARAM_COUNT 12
 #define PARAM_AX        0
 #define PARAM_AY        1
 #define PARAM_AZ        2
@@ -24,15 +23,15 @@
 #define PARAM_MY        7
 #define PARAM_MZ        8
 #define PARAM_T         9
-#define PARAM_CONTROL   10
+#define PARAM_FL_WHEEL  10
+#define PARAM_BR_WHEEL  11
 
 typedef struct {
-    float   param       [ONBOARD_PARAM_COUNT];
-    char    param_name  [ONBOARD_PARAM_COUNT]
-                        [MAVLINK_MSG_PARAM_SET_FIELD_PARAM_ID_LEN];
-} param_holder_t;
+    float val;
+    char  name[MAVLINK_MSG_PARAM_SET_FIELD_PARAM_ID_LEN];
+} Onboard_param_t;
 
-extern param_holder_t params;
+extern Onboard_param_t params[ONBOARD_PARAM_COUNT];
 
 void param_send(uint8_t index);
 void param_queued_send_start(void);

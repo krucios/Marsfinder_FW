@@ -8,9 +8,16 @@
 #include "rover_control.h"
 #include <CMSIS/m2sxxx.h>
 
-pwm_instance_t  g_pwm;
-pwm_id_t pwms[8]= {PWM_1, PWM_2, PWM_3, PWM_4, PWM_5, PWM_6, PWM_7, PWM_8};
+/**
+ * Global variables
+ */
+Rover_distance_t rover_dist = {0, 0, 0, 0};
 
+/**
+ * Local variables
+ */
+pwm_instance_t g_pwm;
+pwm_id_t pwms[8]= {PWM_1, PWM_2, PWM_3, PWM_4, PWM_5, PWM_6, PWM_7, PWM_8};
 pwm_tach_id_t interrupted_tach;
 
 void Rover_init() {
@@ -76,15 +83,19 @@ void Rover_go(const RoverDirections dir) {
 }
 
 void PWM_tach_IRQHandler(void) {
-    uint32_t tach_value;
-
     interrupted_tach = PWM_tach_get_irq_source(&g_pwm);
 
-    if (interrupted_tach != PWM_TACH_INVALID) {
-        tach_value = PWM_tach_read_value(&g_pwm, interrupted_tach);
-
+    switch (interrupted_tach) {
+    case PWM_TACH_INVALID: {
         PWM_tach_clear_irq(&g_pwm, interrupted_tach);
         /* Clear the interrupt in the Cortex-M3 NVIC */
         NVIC_ClearPendingIRQ(FabricIrq0_IRQn);
+    } break;
+    case PWM_TACH_1: {
+        rover_dist.FL += MM_PER_WHEEL_TICK;
+    } break;
+    case PWM_TACH_2: {
+        rover_dist.BR += MM_PER_WHEEL_TICK;
+    } break;
     }
 }

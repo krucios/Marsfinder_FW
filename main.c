@@ -39,19 +39,22 @@ int main(void) {
     while (1) {
         delay(1000);
 #ifdef MPU6050_ENABLED
-        MPU6050_getScaledData(&params.param[PARAM_AX],
-                              &params.param[PARAM_AY],
-                              &params.param[PARAM_AZ],
-                              &params.param[PARAM_GX],
-                              &params.param[PARAM_GY],
-                              &params.param[PARAM_GZ],
-                              &params.param[PARAM_T]);
+        MPU6050_getScaledData(&params[PARAM_AX].val,
+                              &params[PARAM_AY].val,
+                              &params[PARAM_AZ].val,
+                              &params[PARAM_GX].val,
+                              &params[PARAM_GY].val,
+                              &params[PARAM_GZ].val,
+                              &params[PARAM_T].val);
 #endif // MPU6050_ENABLED
 #ifdef HMC_ENABLED
-        HMC_get_scaled_Data(&params.param[PARAM_MX],
-                            &params.param[PARAM_MY],
-                            &params.param[PARAM_MZ]);
+        HMC_get_scaled_Data(&params[PARAM_MX].val,
+                            &params[PARAM_MY].val,
+                            &params[PARAM_MZ].val);
 #endif // HMC_ENABLED
+
+        params[PARAM_FL_WHEEL].val = rover_dist.FL;
+        params[PARAM_BR_WHEEL].val = rover_dist.BR;
 
         if (BT_get_rx(&rx_c, 1)) {
             if (mavlink_parse_char(MAVLINK_COMM_0, rx_c, &msg, &status)) {

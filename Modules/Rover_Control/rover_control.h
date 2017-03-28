@@ -11,9 +11,11 @@
 #include "drivers/CorePWM/core_pwm.h"
 #include "MC_hw_platform.h"
 
-#define PWM_PRESCALE        1
-#define PWM_PERIOD          1000
+#define PWM_PRESCALE        (1)
+#define PWM_PERIOD          (1000)
 #define PWM_MAX PWM_PERIOD
+
+#define MM_PER_WHEEL_TICK (-1) // TODO: place here actual value
 
 typedef enum {
     FORWARD,
@@ -23,7 +25,22 @@ typedef enum {
     STOP
 } RoverDirections;
 
-extern pwm_tach_id_t interrupted_tach;
+/**
+ *
+ *  FL -> []---[] <- FR
+ *           |
+ *          / \
+ *          | |
+ *  BL -> []---[] <- BR
+ */
+typedef struct {
+    uint32_t FL; // Forward left
+    uint32_t FR; // Forward right
+    uint32_t BL; // Backward left
+    uint32_t BR; // Backward left
+} Rover_distance_t;
+
+extern Rover_distance_t rover_dist;
 
 void Rover_init();
 void Rover_go(const RoverDirections dir);

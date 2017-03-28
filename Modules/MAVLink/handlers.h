@@ -17,8 +17,6 @@
 
 #include <stdio.h>
 
-extern param_holder_t params;
-
 void handle_mavlink_message(mavlink_message_t* msg) {
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
     uint32_t len;
@@ -59,15 +57,15 @@ void handle_mavlink_message(mavlink_message_t* msg) {
         // Check if this message is for this system
         if (is_sys_comp_match(read.target_system, read.target_component)) {
             char* key = (char*) read.param_id;
-            if (!strcmp(key, params.param_name[read.param_index])) {
+            if (!strcmp(key, params[read.param_index].name)) {
                 mavlink_message_t message;
                 uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
                 uint8_t len;
 
                 mavlink_msg_param_value_pack(mavlink_system.sysid,
                         mavlink_system.compid, &message,
-                        params.param_name[read.param_index],
-                        params.param[read.param_index], MAVLINK_TYPE_FLOAT,
+                        params[read.param_index].name,
+                        params[read.param_index].val, MAVLINK_TYPE_FLOAT,
                         ONBOARD_PARAM_COUNT, read.param_index);
                 len = mavlink_msg_to_send_buffer(buffer, &message);
                 BT_send(buffer, len);
@@ -83,17 +81,17 @@ void handle_mavlink_message(mavlink_message_t* msg) {
         if (is_sys_comp_match(set.target_system, set.target_component)) {
             char* key = (char*) set.param_id;
             for (uint16_t i = 0; i < ONBOARD_PARAM_COUNT; i++) {
-                if (!strcmp(key, params.param_name[i])) {
-                    if (params.param[i] != set.param_value
+                if (!strcmp(key, params[i].name)) {
+                    if (params[i].val != set.param_value
                             && set.param_type == MAVLINK_TYPE_FLOAT) {
-                        params.param[i] = set.param_value;
+                        params[i].val = set.param_value;
                         mavlink_message_t message;
                         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
                         uint8_t len;
 
                         mavlink_msg_param_value_pack(mavlink_system.sysid,
                                 mavlink_system.compid, &message,
-                                params.param_name[i], params.param[i],
+                                params[i].name, params[i].val,
                                 MAVLINK_TYPE_FLOAT,
                                 ONBOARD_PARAM_COUNT, i);
                         len = mavlink_msg_to_send_buffer(buffer, &message);

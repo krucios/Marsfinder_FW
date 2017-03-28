@@ -36,12 +36,12 @@ void FabricIrq0_IRQHandler(void) {
 void Timer1_IRQHandler() {
     mavlink_message_t msg;
 
-    MadgwickAHRSupdateIMU(params.param[PARAM_GX] * DEG_TO_RAD,
-                          params.param[PARAM_GY] * DEG_TO_RAD,
-                          params.param[PARAM_GZ] * DEG_TO_RAD,
-                          params.param[PARAM_AX],
-                          params.param[PARAM_AY],
-                          params.param[PARAM_AZ]);
+    MadgwickAHRSupdateIMU(params[PARAM_GX].val * DEG_TO_RAD,
+                          params[PARAM_GY].val * DEG_TO_RAD,
+                          params[PARAM_GZ].val * DEG_TO_RAD,
+                          params[PARAM_AX].val,
+                          params[PARAM_AY].val,
+                          params[PARAM_AZ].val);
 
     mavlink_msg_heartbeat_pack(
             mavlink_system.sysid,
@@ -105,19 +105,19 @@ void Timer1_IRQHandler() {
             mavlink_system.compid,
             &msg,
             usec(),
-            params.param[PARAM_AX],
-            params.param[PARAM_AY],
-            params.param[PARAM_AZ],
-            params.param[PARAM_GX],
-            params.param[PARAM_GY],
-            params.param[PARAM_GZ],
-            params.param[PARAM_MX],
-            params.param[PARAM_MY],
-            params.param[PARAM_MZ],
+            params[PARAM_AX].val,
+            params[PARAM_AY].val,
+            params[PARAM_AZ].val,
+            params[PARAM_GX].val,
+            params[PARAM_GY].val,
+            params[PARAM_GZ].val,
+            params[PARAM_MX].val,
+            params[PARAM_MY].val,
+            params[PARAM_MZ].val,
             0,
             0,
             0,
-            params.param[PARAM_T],
+            params[PARAM_T].val,
             (1 << 12) | ((1 << 9) - 1));
     mavlink_send_msg(&msg);
 
@@ -130,9 +130,9 @@ void Timer1_IRQHandler() {
             q1,
             q2,
             q3,
-            params.param[PARAM_GX] * DEG_TO_RAD,
-            params.param[PARAM_GY] * DEG_TO_RAD,
-            params.param[PARAM_GZ] * DEG_TO_RAD);
+            params[PARAM_GX].val * DEG_TO_RAD,
+            params[PARAM_GY].val * DEG_TO_RAD,
+            params[PARAM_GZ].val * DEG_TO_RAD);
     mavlink_send_msg(&msg);
 
     usec_service_routine();

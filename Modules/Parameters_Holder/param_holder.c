@@ -7,20 +7,20 @@
 
 #include "param_holder.h"
 
-param_holder_t params = {
-        .param      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        .param_name =
-            {"ACCEL_X",
-             "ACCEL_Y",
-             "ACCEL_Z",
-             "GYROS_X",
-             "GYROS_Y",
-             "GYROS_Z",
-             "MAGNT_X",
-             "MAGNT_Y",
-             "MAGNT_Z",
-             "TEMP_CS",
-             "CONTROL"}};
+Onboard_param_t params[ONBOARD_PARAM_COUNT] = {
+        {0, "ACCEL_X"},
+        {0, "ACCEL_Y"},
+        {0, "ACCEL_Z"},
+        {0, "GYROS_X"},
+        {0, "GYROS_Y"},
+        {0, "GYROS_Z"},
+        {0, "MAGNT_X"},
+        {0, "MAGNT_Y"},
+        {0, "MAGNT_Z"},
+        {0, "TEMP_CS"},
+        {0, "LEFT_WH"},
+        {0, "RIGH_WH"}
+    };
 
 static uint16_t m_parameter_i = 0;
 
@@ -33,8 +33,8 @@ void param_send(uint8_t index) {
         mavlink_system.sysid,
         mavlink_system.compid,
         &message,
-        params.param_name[index],
-        params.param[index],
+        params[index].name,
+        params[index].val,
         MAVLINK_TYPE_INT16_T,
         ONBOARD_PARAM_COUNT,
         index);
