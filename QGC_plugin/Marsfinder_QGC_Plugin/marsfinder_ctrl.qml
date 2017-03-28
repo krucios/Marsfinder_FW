@@ -24,6 +24,7 @@ import QGroundControl.Controllers 1.0
 
 FactPanel {
     id: panel
+    focus: true
     
     property var qgcView: null // Temporary hack for broken QGC parameter validation implementation
 
@@ -32,19 +33,24 @@ FactPanel {
     // Your own custom changes start here - everything else above is always required
 
     Column {
-        spacing: 5
+        id: main_col
         focus: true
+        spacing: 5
 
         property int dir_FB: 0
         property int dir_LR: 0
 
+        property string direction_text: "Stop"
+
         Keys.onUpPressed: {
             if (dir_FB < 1) {
                 dir_FB = dir_FB + 1
-                console.log('Up pressed: ' + dir_FB)
+                // console.log('Up pressed: ' + dir_FB)
                 if (dir_FB) {
+                    direction_text = "Forward"
                     controller.sendCommand(31010,0, 0, 0, 0, 0, 0, 0, 0, 0) // Forward
                 } else {
+                    direction_text = "Stop"
                     controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
                 }
             }
@@ -52,10 +58,12 @@ FactPanel {
         Keys.onDownPressed: {
             if (dir_FB > -1) {
                 dir_FB = dir_FB - 1
-                console.log('Down pressed: ' + dir_FB)
+                // console.log('Down pressed: ' + dir_FB)
                 if (dir_FB == -1) {
+                    direction_text = "Backward"
                     controller.sendCommand(31010,0, 0, 1, 0, 0, 0, 0, 0, 0) // Backward
                 } else {
+                    direction_text = "Stop"
                     controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
                 }
             }
@@ -64,10 +72,12 @@ FactPanel {
         Keys.onLeftPressed: {
             if (dir_LR < 1) {
                 dir_LR = dir_LR + 1
-                console.log('Left pressed: ' + dir_LR)
+                // console.log('Left pressed: ' + dir_LR)
                 if (dir_LR) {
+                    direction_text = "Left"
                     controller.sendCommand(31010,0, 0, 2, 0, 0, 0, 0, 0, 0) // Left
                 } else {
+                    direction_text = "Stop"
                     controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
                 }
             }
@@ -76,80 +86,141 @@ FactPanel {
         Keys.onRightPressed: {
             if (dir_LR > -1) {
                 dir_LR = dir_LR - 1
-                console.log('Right pressed: ' + dir_LR)
+                // console.log('Right pressed: ' + dir_LR)
                 if (dir_LR == -1) {
+                    direction_text = "Right"
                     controller.sendCommand(31010,0, 0, 3, 0, 0, 0, 0, 0, 0) // Right
                 } else {
+                    direction_text = "Stop"
                     controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
                 }
             }
 
         }
+
         // The QGCButton control is provided by QGroundControl.Controls. It is a wrapper around
         // the standard Qml Button element which using the default QGC font and color palette.
 
-        RowLayout {
+        ColumnLayout {
+            focus: true
             Label {
-                text: "Directions"
+                text: "Direction: "
                 color: "white"
             }
 
-            Button {
-                text: "FORWARD"
-                onClicked: {
-                    controller.sendCommand(31010,0, 0, 0, 0, 0, 0, 0, 0, 0)
+            Label {
+                text: main_col.direction_text
+                color: "white"
+            }
+
+            RowLayout {
+                Button {
+                    text: "FORWARD"
+                    focus: true
+                    onClicked: {
+                        main_col.direction_text = "Forward"
+                        controller.sendCommand(31010,0, 0, 0, 0, 0, 0, 0, 0, 0)
+                    }
+                }
+
+                Button {
+                    text: "Move for"
+                    focus: true
+                    onClicked: {
+                        main_col.direction_text = "Forward"
+                        controller.sendCommand(31011,0, 0, 0, forward_sb.value, 0, 0, 0, 0, 0)
+                    }
+                }
+
+                SpinBox {
+                    id: forward_sb
+                    prefix: "sm"
                 }
             }
 
-            Button {
-                text: "BACKWARD"
-                onClicked: {
-                    controller.sendCommand(31010,0, 0, 1, 0, 0, 0, 0, 0, 0)
+            RowLayout {
+                Button {
+                    text: "BACKWARD"
+                    focus: true
+                    onClicked: {
+                        main_col.direction_text = "Backward"
+                        controller.sendCommand(31010,0, 0, 1, 0, 0, 0, 0, 0, 0)
+                    }
+                }
+
+                Button {
+                    text: "Move for"
+                    focus: true
+                    onClicked: {
+                        main_col.direction_text = "Backward"
+                        controller.sendCommand(31011,0, 0, 1, backward_sb.value, 0, 0, 0, 0, 0)
+                    }
+                }
+
+                SpinBox {
+                    id: backward_sb
+                    prefix: "sm"
                 }
             }
 
-            Button {
-                text: "ROUND_LEFT"
-                onClicked: {
-                    controller.sendCommand(31010,0, 0, 2, 0, 0, 0, 0, 0, 0)
+            RowLayout {
+                Button {
+                    text: "LEFT"
+                    focus: true
+                    onClicked: {
+                        main_col.direction_text = "Left"
+                        controller.sendCommand(31010,0, 0, 2, 0, 0, 0, 0, 0, 0)
+                    }
+                }
+
+                Button {
+                    text: "Move for"
+                    focus: true
+                    onClicked: {
+                        main_col.direction_text = "Left"
+                        controller.sendCommand(31011,0, 0, 2, left_sb.value, 0, 0, 0, 0, 0)
+                    }
+                }
+
+                SpinBox {
+                    id: left_sb
+                    prefix: "sm"
                 }
             }
 
-            Button {
-                text: "ROUND_RIGHT"
-                onClicked: {
-                    controller.sendCommand(31010,0, 0, 3, 0, 0, 0, 0, 0, 0)
+            RowLayout {
+                Button {
+                    text: "RIGHT"
+                    focus: true
+                    onClicked: {
+                        main_col.direction_text = "Right"
+                        controller.sendCommand(31010,0, 0, 3, 0, 0, 0, 0, 0, 0)
+                    }
+                }
+
+                Button {
+                    text: "Move for"
+                    focus: true
+                    onClicked: {
+                        main_col.direction_text = "Right"
+                        controller.sendCommand(31011,0, 0, 3, right_sb.value, 0, 0, 0, 0, 0)
+                    }
+                }
+
+                SpinBox {
+                    id: right_sb
+                    prefix: "sm"
                 }
             }
 
             Button {
                 text: "STOP"
+                focus: true
                 onClicked: {
+                    main_col.direction_text = "Stop"
                     controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0)
                 }
             }
         }
-
-//        RowLayout {
-//            Label {
-//                text: "Motor switch"
-//                color: "white"
-//            }
-//
-//            Switch {
-//                id: motor_enable
-//                checked: false
-//                onCheckedChanged: {
-//                    controller.sendCommand(31010, 0, 0, checked ? 7 : 0, checked ? 7 : 0, checked ? 7 : 0, checked ? 7 : 0, 0, 0, 0)
-//                }
-//            }
-//        }
-
-//        Button {
-//            text: "Calibrate"
-//            onClicked: {
-//                controller.sendCommand(31012,0, 0, 0, 0, 0, 0, 0, 0, 0)
-//            }
-//        }
     }
 }
