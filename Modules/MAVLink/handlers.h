@@ -28,24 +28,36 @@ void handle_mavlink_message(mavlink_message_t* msg) {
         mavlink_msg_command_long_decode(msg, &cmd);
 
         if (is_sys_comp_match(cmd.target_system, cmd.target_component)) {
+            uint8_t result;
+            mavlink_message_t ack;
+
             switch (cmd.command) {
             case MAV_CMD_USER_1: {
                 handle_mavlink_user_1_cmd(&cmd);
+                result = MAV_RESULT_ACCEPTED; // TODO: check it
             } break;
             case MAV_CMD_USER_2: {
                 handle_mavlink_user_2_cmd(&cmd);
+                result = MAV_RESULT_ACCEPTED; // TODO: check it
             } break;
             default: {
                     mavlink_message_t msg;
                     uint8_t buff[50];
 
                     sprintf(buff, "Unknown CMD: %d", cmd.command);
-
+                    result = MAV_RESULT_UNSUPPORTED;
                     mavlink_msg_statustext_pack(mavlink_system.sysid,
                             mavlink_system.compid, &msg, MAV_SEVERITY_ERROR, buff);
                     mavlink_send_msg(&msg);
                 }
             }
+            mavlink_msg_command_ack_pack(
+                    mavlink_system.sysid,
+                    mavlink_system.compid,
+                    &ack,
+                    cmd.command,
+                    result);
+            mavlink_send_msg(&ack);
         }
     }
     break;
