@@ -134,7 +134,7 @@ FactPanel {
 
                 SpinBox {
                     id: forward_sb
-                    prefix: "sm"
+                    suffix: " sm"
                 }
             }
 
@@ -159,7 +159,7 @@ FactPanel {
 
                 SpinBox {
                     id: backward_sb
-                    prefix: "sm"
+                    suffix: " sm"
                 }
             }
 
@@ -184,7 +184,7 @@ FactPanel {
 
                 SpinBox {
                     id: left_sb
-                    prefix: "sm"
+                    suffix: " sm"
                 }
             }
 
@@ -209,7 +209,7 @@ FactPanel {
 
                 SpinBox {
                     id: right_sb
-                    prefix: "sm"
+                    suffix: " sm"
                 }
             }
 
