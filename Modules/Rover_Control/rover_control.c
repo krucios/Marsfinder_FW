@@ -30,8 +30,8 @@ pwm_id_t pwms[8] = {PWM_1, PWM_2, PWM_3, PWM_4, PWM_5, PWM_6, PWM_7, PWM_8};
 pwm_tach_id_t interrupted_tach;
 Rover_direction FL_dir, BR_dir;
 
-uint32_t target_distance = 0;
-uint32_t target_angle = 0;
+int32_t target_distance = 0;
+int32_t target_angle = 0;
 
 void Rover_init() {
     uint32_t i;
@@ -109,22 +109,33 @@ void Rover_go(const Rover_direction dir) {
 
 void Rover_move(const Rover_direction dir, const uint32_t units) {
     if (dir == FORWARD || dir == BACKWARD) {
-        uint32_t start_value = (rover_dist.FL + rover_dist.BR) / 2;
+        int32_t start_value = (rover_dist.FL + rover_dist.BR) / 2;
 
-        target_distance = start_value + units;
+        target_distance = start_value;
+        if (dir == FORWARD) {
+            target_distance += units;
+        } else {
+            target_distance -= units;
+        }
     } else if (dir == ROUND_LEFT || dir == ROUND_RIGHT) {
         float q[4] = {q0, q1, q2, q3};
         float pitch, roll, yaw;
-        uint32_t yaw_num;
+        int32_t yaw_num;
 
         mavlink_quaternion_to_euler(q, &roll, &pitch, &yaw);
         yaw_num = RAD_TO_DEG(yaw);
-        target_angle = yaw_num + (dir == ROUND_LEFT) ? (-units) : units;
 
-        while (target_angle < 0) {
+        target_angle = yaw_num;
+        if (dir == ROUND_RIGHT) {
+            target_angle += units;
+        } else {
+            target_angle -= units;
+        }
+
+        while (target_angle < -180) {
             target_angle += 360;
         }
-        while (target_angle > 360) {
+        while (target_angle > 180) {
             target_angle -= 360;
         }
     }
@@ -134,14 +145,14 @@ void Rover_move(const Rover_direction dir, const uint32_t units) {
 void Rover_move_routine() {
     float q[4] = {q0, q1, q2, q3};;
     float pitch, roll, yaw;
-    uint32_t cur_dist, yaw_num;
+    int32_t cur_dist, yaw_num;
 
     switch (rover_state) {
     case FORWARD:
     case BACKWARD: {
         cur_dist = (rover_dist.FL + rover_dist.BR) / 2;
 
-        if (target_distance < cur_dist) {
+        if (abs(target_distance - cur_dist) < ROVER_ALLOWED_DIST_DIFF) {
             Rover_go(STOP);
         }
     } break;

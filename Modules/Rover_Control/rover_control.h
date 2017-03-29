@@ -16,7 +16,8 @@
 
 #define SM_PER_WHEEL_TICK (1u)
 
-#define ROVER_ALLOWED_ANGLE_DIFF (10u)
+#define ROVER_ALLOWED_DIST_DIFF  (10u) // sm
+#define ROVER_ALLOWED_ANGLE_DIFF (10u) // degrees
 
 typedef enum {
     FORWARD,
@@ -35,10 +36,10 @@ typedef enum {
  *  BL -> []---[] <- BR
  */
 typedef struct {
-    uint32_t FL; // Forward left
-    uint32_t FR; // Forward right
-    uint32_t BL; // Backward left
-    uint32_t BR; // Backward left
+    int32_t FL; // Forward left
+    int32_t FR; // Forward right
+    int32_t BL; // Backward left
+    int32_t BR; // Backward left
 } Rover_distance_t;
 
 extern Rover_distance_t rover_dist;
