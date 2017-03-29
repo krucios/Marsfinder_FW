@@ -9,13 +9,14 @@
 #define ROVER_CONTROL_H_
 
 #include "drivers/CorePWM/core_pwm.h"
-#include "MC_hw_platform.h"
 
-#define PWM_PRESCALE        (1)
-#define PWM_PERIOD          (1000)
+#define PWM_PRESCALE        (1u)
+#define PWM_PERIOD          (1000u)
 #define PWM_MAX PWM_PERIOD
 
 #define SM_PER_WHEEL_TICK (1u)
+
+#define ROVER_ALLOWED_ANGLE_DIFF (10u)
 
 typedef enum {
     FORWARD,
@@ -45,7 +46,7 @@ extern Rover_direction rover_state;
 
 void Rover_init();
 void Rover_go(const Rover_direction dir);
-void Rover_move(const Rover_direction dir, const uint32_t sm);
+void Rover_move(const Rover_direction dir, const uint32_t unit); // sm for FW and BW deg for RL and RR
 void Rover_move_routine();
 
 void PWM_tach_IRQHandler(void);

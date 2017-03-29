@@ -36,9 +36,10 @@ void FabricIrq0_IRQHandler(void) {
 void Timer1_IRQHandler() {
     mavlink_message_t msg;
 
-    MadgwickAHRSupdateIMU(params[PARAM_GX].val * DEG_TO_RAD,
-                          params[PARAM_GY].val * DEG_TO_RAD,
-                          params[PARAM_GZ].val * DEG_TO_RAD,
+    MadgwickAHRSupdateIMU(
+               DEG_TO_RAD(params[PARAM_GX].val),
+               DEG_TO_RAD(params[PARAM_GY].val),
+               DEG_TO_RAD(params[PARAM_GZ].val),
                           params[PARAM_AX].val,
                           params[PARAM_AY].val,
                           params[PARAM_AZ].val);
@@ -130,9 +131,9 @@ void Timer1_IRQHandler() {
             q1,
             q2,
             q3,
-            params[PARAM_GX].val * DEG_TO_RAD,
-            params[PARAM_GY].val * DEG_TO_RAD,
-            params[PARAM_GZ].val * DEG_TO_RAD);
+            DEG_TO_RAD(params[PARAM_GX].val),
+            DEG_TO_RAD(params[PARAM_GY].val),
+            DEG_TO_RAD(params[PARAM_GZ].val));
     mavlink_send_msg(&msg);
 
     usec_service_routine();
