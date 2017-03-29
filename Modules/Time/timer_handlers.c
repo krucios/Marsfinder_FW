@@ -145,5 +145,6 @@ void Timer1_IRQHandler() {
  * Read values from sensors
  */
 void Timer2_IRQHandler() {
+    Rover_move_routine();
     MSS_TIM2_clear_irq();
 }

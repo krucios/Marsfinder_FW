@@ -12,7 +12,7 @@
 #include <drivers/mss_timer/mss_timer.h>
 
 #define MSS_TIM1_FREQ           (20u)    // in Hz
-#define MSS_TIM2_FREQ           (200u)   // in Hz
+#define MSS_TIM2_FREQ           (50u)    // in Hz
 #define MSS_SYS_TIM_FFREQ       (100u)   // in Hz
 #define MSS_SYS_M3_CLK_FREQ_MHZ (MSS_SYS_M3_CLK_FREQ / 1000000u)
 

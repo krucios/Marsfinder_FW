@@ -12,14 +12,17 @@
  * Global variables
  */
 Rover_distance_t rover_dist = {0, 0, 0, 0};
+Rover_direction rover_state = STOP;
 
 /**
  * Local variables
  */
 pwm_instance_t g_pwm;
-pwm_id_t pwms[8]= {PWM_1, PWM_2, PWM_3, PWM_4, PWM_5, PWM_6, PWM_7, PWM_8};
+pwm_id_t pwms[8] = {PWM_1, PWM_2, PWM_3, PWM_4, PWM_5, PWM_6, PWM_7, PWM_8};
 pwm_tach_id_t interrupted_tach;
 Rover_direction FL_dir, BR_dir;
+
+uint32_t target_distance = 0;
 
 void Rover_init() {
     uint32_t i;
@@ -49,6 +52,8 @@ void Rover_init() {
 
 void Rover_go(const Rover_direction dir) {
     uint32_t i;
+
+    rover_state = dir;
 
     switch (dir) {
         case FORWARD: {
@@ -95,12 +100,15 @@ void Rover_go(const Rover_direction dir) {
 
 void Rover_move(const Rover_direction dir, const uint32_t sm) {
     uint32_t start_value = (rover_dist.FL + rover_dist.BR) / 2;
-    uint32_t cur_value = start_value;
+    target_distance = start_value + sm;
     Rover_go(dir);
-    while ((cur_value - start_value) < sm) {
-        cur_value = (rover_dist.FL + rover_dist.BR) / 2;
+}
+
+void Rover_move_routine() {
+    uint32_t cur_dist = (rover_dist.FL + rover_dist.BR) / 2;
+    if (target_distance < cur_dist) {
+        Rover_go(STOP);
     }
-    Rover_go(STOP);
 }
 
 void PWM_tach_IRQHandler(void) {

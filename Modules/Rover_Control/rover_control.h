@@ -41,10 +41,12 @@ typedef struct {
 } Rover_distance_t;
 
 extern Rover_distance_t rover_dist;
+extern Rover_direction rover_state;
 
 void Rover_init();
 void Rover_go(const Rover_direction dir);
 void Rover_move(const Rover_direction dir, const uint32_t sm);
+void Rover_move_routine();
 
 void PWM_tach_IRQHandler(void);
 
