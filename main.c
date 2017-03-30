@@ -31,11 +31,6 @@ int main(void) {
     // Modules initialisation
     setup();
 
-    uint8_t rx_c;
-
-    mavlink_message_t msg;
-    mavlink_status_t status;
-
     while (1) {
         delay(1000);
 #ifdef MPU6050_ENABLED
@@ -56,12 +51,8 @@ int main(void) {
         params[PARAM_FL_WHEEL].val = rover_dist.FL;
         params[PARAM_BR_WHEEL].val = rover_dist.BR;
 
-        if (bt_get_rx(&rx_c, 1)) {
-            if (mavlink_parse_char(MAVLINK_COMM_0, rx_c, &msg, &status)) {
-                handle_mavlink_message(&msg);
-            }
-            param_queued_send_routine();
-        }
+        bt_rx_routine();
+        param_queued_send_routine();
     }
     return (0);
 }
@@ -73,6 +64,7 @@ void setup() {
     i2c_init();
     mavlink_sys_update(MAV_MODE_AUTO_ARMED, MAV_STATE_STANDBY);
     timer_mss1_start();
+
 #ifdef MPU6050_ENABLED
     mpu6050_init();
 #ifdef MPU6050_SELFTEST
@@ -91,6 +83,7 @@ void setup() {
 #endif // MPU6050_SELFTEST
     mpu6050_calibration();
 #endif // MPU6050_ENABLED
+
 #ifdef HMC_ENABLED
     HMC_init();
 #ifdef HMC_SELFTEST
@@ -108,6 +101,7 @@ void setup() {
     }
 #endif // HMC_SELFTEST
 #endif // HMC_ENABLED
+
     timer_mss2_start();
 }
 
