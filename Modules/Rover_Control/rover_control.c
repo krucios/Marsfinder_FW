@@ -34,7 +34,7 @@ Rover_direction FL_dir, BR_dir;
 int32_t target_distance = 0;
 int32_t target_angle = 0;
 
-void Rover_init() {
+void rover_init() {
     uint32_t i;
 
     PWM_init(&g_pwm, COREPWM_0_0, PWM_PRESCALE, PWM_PERIOD);
@@ -45,7 +45,7 @@ void Rover_init() {
     for (i = 0; i < 8; i++)
         PWM_enable(&g_pwm, pwms[i]);
 
-    Rover_go(STOP);
+    rover_go(STOP);
 
     PWM_tach_clear_status(&g_pwm, PWM_TACH_1);
     PWM_tach_clear_status(&g_pwm, PWM_TACH_2);
@@ -60,7 +60,7 @@ void Rover_init() {
     NVIC_EnableIRQ(FabricIrq0_IRQn);
 }
 
-void Rover_go(const Rover_direction dir) {
+void rover_go(const Rover_direction dir) {
     uint32_t i;
 
     rover_state = dir;
@@ -108,7 +108,7 @@ void Rover_go(const Rover_direction dir) {
     }
 }
 
-void Rover_move(const Rover_direction dir, const uint32_t units) {
+void rover_move(const Rover_direction dir, const uint32_t units) {
     if (dir != STOP) {
         if (dir == FORWARD || dir == BACKWARD) {
             int32_t start_value = (rover_dist.FL + rover_dist.BR) / 2;
@@ -141,18 +141,18 @@ void Rover_move(const Rover_direction dir, const uint32_t units) {
                 target_angle -= 360;
             }
         }
-        Rover_go(dir);
+        rover_go(dir);
         rover_mode = CMD_EXEC;
     }
 }
 
 
-void Rover_move(const Rover_direction dir) {
-    Rover_go(dir);
+void rover_movei(const Rover_direction dir) {
+    rover_go(dir);
     rover_mode = MANUAL_CTRL;
 }
 
-void Rover_move_routine() {
+void rover_move_routine() {
     if (rover_mode == CMD_EXEC) {
         float q[4] = {q0, q1, q2, q3};;
         float pitch, roll, yaw;
@@ -164,7 +164,7 @@ void Rover_move_routine() {
                 cur_dist = (rover_dist.FL + rover_dist.BR) / 2;
 
                 if (abs(target_distance - cur_dist) < ROVER_ALLOWED_DIST_DIFF) {
-                    Rover_go(STOP);
+                    rover_go(STOP);
                     rover_mode = MANUAL_CTRL;
                 }
             } break;
@@ -173,7 +173,7 @@ void Rover_move_routine() {
                 mavlink_quaternion_to_euler(q, &roll, &pitch, &yaw);
                 yaw_num = RAD_TO_DEG(yaw);
                 if (abs(yaw_num - target_angle) < ROVER_ALLOWED_ANGLE_DIFF) {
-                    Rover_go(STOP);
+                    rover_go(STOP);
                     rover_mode = MANUAL_CTRL;
                 }
             } break;

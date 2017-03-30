@@ -39,7 +39,7 @@ void param_send(uint8_t index) {
         ONBOARD_PARAM_COUNT,
         index);
     len = mavlink_msg_to_send_buffer(buffer, &message);
-    BT_send(buffer, len);
+    bt_send(buffer, len);
 }
 
 void param_queued_send_start(void) {

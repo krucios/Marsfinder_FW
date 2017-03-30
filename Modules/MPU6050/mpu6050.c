@@ -7,17 +7,17 @@ static uint8_t cur_accel_range;
 
 static int16_t c_ax, c_ay, c_az, c_gx, c_gy, c_gz, c_t;
 
-void MPU6050_init() {
-    MPU6050_setClockSource(MPU6050_CLOCK_PLL_XGYRO);
-    MPU6050_setFullScaleGyroRange(MPU6050_GYRO_FS_1000);
-    MPU6050_setFullScaleAccelRange(MPU6050_ACCEL_FS_4);
-    MPU6050_setBypassMode(1);
-    MPU6050_setSleepEnabled(0); // thanks to Jack Elston for pointing this one out!
+void mpu6050_init() {
+    mpu6050_setClockSource(MPU6050_CLOCK_PLL_XGYRO);
+    mpu6050_setFullScaleGyroRange(MPU6050_GYRO_FS_1000);
+    mpu6050_setFullScaleAccelRange(MPU6050_ACCEL_FS_4);
+    mpu6050_setBypassMode(1);
+    mpu6050_setSleepEnabled(0); // thanks to Jack Elston for pointing this one out!
 
-    MPU6050_setDLPFMode(MPU6050_DLPF_BW_42);
+    mpu6050_setDLPFMode(MPU6050_DLPF_BW_42);
 }
 
-uint8_t MPU6050_selfTest() {
+uint8_t mpu6050_selfTest() {
     int16_t i;
     uint8_t retcode = 0;
 
@@ -38,8 +38,8 @@ uint8_t MPU6050_selfTest() {
     uint8_t prev_gyro_range = cur_gyro_range;
     uint8_t prev_accel_range = cur_accel_range;
 
-    MPU6050_setFullScaleGyroRange(MPU6050_GYRO_FS_250);
-    MPU6050_setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
+    mpu6050_setFullScaleGyroRange(MPU6050_GYRO_FS_250);
+    mpu6050_setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
 
     uint8_t buff[4];
     buff[0] = MPU6050_SELF_TEST_X;
@@ -78,7 +78,7 @@ uint8_t MPU6050_selfTest() {
     i2c_writeBits(MPU6050_ADDRESS, MPU6050_RA_ACCEL_CONFIG, 7, 3, 0b111);
     i2c_writeBits(MPU6050_ADDRESS, MPU6050_RA_GYRO_CONFIG, 7, 3, 0b111);
 
-    MPU6050_getRawData(&a_s[0], &a_s[1], &a_s[2], &g_s[0], &g_s[1], &g_s[2],
+    mpu6050_getRawData(&a_s[0], &a_s[1], &a_s[2], &g_s[0], &g_s[1], &g_s[2],
             &i);
 
     /*------------------------------*
@@ -87,7 +87,7 @@ uint8_t MPU6050_selfTest() {
     i2c_writeBits(MPU6050_ADDRESS, MPU6050_RA_ACCEL_CONFIG, 7, 3, 0b000);
     i2c_writeBits(MPU6050_ADDRESS, MPU6050_RA_GYRO_CONFIG, 7, 3, 0b000);
 
-    MPU6050_getRawData(&a[0], &a[1], &a[2], &g[0], &g[1], &g[2], &i);
+    mpu6050_getRawData(&a[0], &a[1], &a[2], &g[0], &g[1], &g[2], &i);
 
     /*------------------------------*
      * Calculate change from factory trim
@@ -107,20 +107,20 @@ uint8_t MPU6050_selfTest() {
         }
     }
 
-    MPU6050_setFullScaleGyroRange(prev_gyro_range);
-    MPU6050_setFullScaleAccelRange(prev_accel_range);
+    mpu6050_setFullScaleGyroRange(prev_gyro_range);
+    mpu6050_setFullScaleAccelRange(prev_accel_range);
 
-    return retcode;
+    return (retcode);
 }
 
-void MPU6050_setClockSource(uint8_t source) {
+void mpu6050_setClockSource(uint8_t source) {
     i2c_writeBits(MPU6050_ADDRESS,
     MPU6050_RA_PWR_MGMT_1,
     MPU6050_PWR1_CLKSEL_BIT,
     MPU6050_PWR1_CLKSEL_LENGTH, source);
 }
 
-void MPU6050_setFullScaleGyroRange(uint8_t range) {
+void mpu6050_setFullScaleGyroRange(uint8_t range) {
     cur_gyro_range = range;
     i2c_writeBits(MPU6050_ADDRESS,
     MPU6050_RA_GYRO_CONFIG,
@@ -128,7 +128,7 @@ void MPU6050_setFullScaleGyroRange(uint8_t range) {
     MPU6050_GCONFIG_FS_SEL_LENGTH, range);
 }
 
-void MPU6050_setFullScaleAccelRange(uint8_t range) {
+void mpu6050_setFullScaleAccelRange(uint8_t range) {
     cur_accel_range = range;
     i2c_writeBits(MPU6050_ADDRESS,
     MPU6050_RA_ACCEL_CONFIG,
@@ -136,26 +136,26 @@ void MPU6050_setFullScaleAccelRange(uint8_t range) {
     MPU6050_ACONFIG_AFS_SEL_LENGTH, range);
 }
 
-void MPU6050_setSleepEnabled(uint8_t enabled) {
+void mpu6050_setSleepEnabled(uint8_t enabled) {
     i2c_writeBit(MPU6050_ADDRESS,
     MPU6050_RA_PWR_MGMT_1,
     MPU6050_PWR1_SLEEP_BIT, enabled);
 }
 
-void MPU6050_setBypassMode(uint8_t enabled) {
+void mpu6050_setBypassMode(uint8_t enabled) {
     i2c_writeBit(MPU6050_ADDRESS,
     MPU6050_RA_INT_PIN_CFG,
     MPU6050_INTCFG_I2C_BYPASS_EN_BIT, enabled);
 }
 
-void MPU6050_setDLPFMode(uint8_t mode) {
+void mpu6050_setDLPFMode(uint8_t mode) {
     i2c_writeBits(MPU6050_ADDRESS,
     MPU6050_RA_CONFIG,
     MPU6050_CFG_DLPF_CFG_BIT,
     MPU6050_CFG_DLPF_CFG_LENGTH, mode);
 }
 
-void MPU6050_calibration() {
+void mpu6050_calibration() {
     uint16_t i;
 
     int16_t _ax;
@@ -166,9 +166,9 @@ void MPU6050_calibration() {
     int16_t _gz;
     int16_t _t;
 
-    MPU6050_getRawData(&c_ax, &c_ay, &c_az, &c_gx, &c_gy, &c_gz, &c_t);
+    mpu6050_getRawData(&c_ax, &c_ay, &c_az, &c_gx, &c_gy, &c_gz, &c_t);
     for (i = 0; i < MPU_CALIBRATION_SAMPLES_COUNT; i++) {
-        MPU6050_getRawData(&_ax, &_ay, &_az, &_gx, &_gy, &_gz, &_t);
+        mpu6050_getRawData(&_ax, &_ay, &_az, &_gx, &_gy, &_gz, &_t);
         c_ax = ((uint32_t) (c_ax + _ax)) / 2;
         c_ay = ((uint32_t) (c_ay + _ay)) / 2;
         c_az = ((uint32_t) (c_az + _az)) / 2;
@@ -179,7 +179,7 @@ void MPU6050_calibration() {
     }
 }
 
-void MPU6050_getRawData(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx,
+void mpu6050_getRawData(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx,
         int16_t* gy, int16_t* gz, int16_t* t) {
     uint8_t tx_len = 1;
     uint8_t tx_buf[tx_len];
@@ -202,9 +202,9 @@ void MPU6050_getRawData(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx,
     *gz = (int16_t) -(((rx_buf[12]) << 8) | rx_buf[13]);
 }
 
-void MPU6050_getData(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx,
+void mpu6050_getData(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx,
         int16_t* gy, int16_t* gz, int16_t* t) {
-    MPU6050_getRawData(ax, ay, az, gx, gy, gz, t);
+    mpu6050_getRawData(ax, ay, az, gx, gy, gz, t);
 
     if (USE_CALIBRATED_MASK & CALIBRATED_ACCX) {
         *ax -= c_ax;
@@ -229,7 +229,7 @@ void MPU6050_getData(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx,
     }
 }
 
-void MPU6050_getScaledData(float* ax, float* ay, float* az, float* gx,
+void mpu6050_getScaledData(float* ax, float* ay, float* az, float* gx,
         float* gy, float* gz, float* t) {
     int16_t _ax;
     int16_t _ay;
@@ -245,7 +245,7 @@ void MPU6050_getScaledData(float* ax, float* ay, float* az, float* gx,
     float accel_factor;
     float gyro_factor;
 
-    MPU6050_getData(&_ax, &_ay, &_az, &_gx, &_gy, &_gz, &_t);
+    mpu6050_getData(&_ax, &_ay, &_az, &_gx, &_gy, &_gz, &_t);
 
     switch (cur_accel_range) {
     case MPU6050_ACCEL_FS_2:

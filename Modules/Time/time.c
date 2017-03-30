@@ -13,9 +13,9 @@ uint32_t sec = 0;
 uint32_t msec = 0;
 
 inline uint64_t usec() {
-    return (uint64_t)(1000000 * sec)
+    return ((uint64_t)(1000000 * sec)
          + (MSEC_PER_SEC * msec)
-         + (TIMER_PERIOD(USR_TIMER_FREQ) - MSS_TIM1_get_current_value()) / 50;
+         + (TIMER_PERIOD(USR_TIMER_FREQ) - MSS_TIM1_get_current_value()) / 50);
          //  TimVal * TimPeriod (us) / TimReloadVal
 }
 

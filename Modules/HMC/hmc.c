@@ -6,7 +6,7 @@ static int16_t soft_d[3]    = {0, 0, 0}; // X, Y, Z soft iron denominators
 
 float digital_resolution = 0.0;
 
-void HMC_init() {
+void hmc_init() {
     uint8_t tx_len = 2;
     uint8_t tx_buf[tx_len];
 
@@ -15,20 +15,20 @@ void HMC_init() {
 
     i2c_writeBytes(HMC_SERIAL_ADDR, tx_buf, tx_len);
 
-    HMC_setScale(10.0f);
-    HMC_setMode(HMC_MEASURE_CONTIN);
+    hmc_setScale(10.0f);
+    hmc_setMode(HMC_MEASURE_CONTIN);
 
-    HMC_calibration();
+    hmc_calibration();
 }
 
-void HMC_calibration() {
+void hmc_calibration() {
     uint16_t i = 0;
     int16_t mag_max[3]  = {0x8000, 0x8000, 0x8000},
             mag_min[3]  = {0x7FFF, 0x7FFF, 0x7FFF},
             mag_temp[3] = {0, 0, 0};
 
     for(i = 0; i < HMC_CALIBRATION_SAMPLES_COUNT; i++) {
-        HMC_get_raw_Data(&mag_temp[0], &mag_temp[1], &mag_temp[2]);
+        hmc_get_raw_Data(&mag_temp[0], &mag_temp[1], &mag_temp[2]);
         for (int j = 0; j < 3; j++) {
             if(mag_temp[j] > mag_max[j]) mag_max[j] = mag_temp[j];
             if(mag_temp[j] < mag_min[j]) mag_min[j] = mag_temp[j];
@@ -53,7 +53,7 @@ void HMC_calibration() {
     soft_n[2] = avg;
 }
 
-int8_t HMC_self_test() {
+int8_t hmc_self_test() {
     uint8_t retcode = 0;
 
     int16_t mx, my, mz;
@@ -67,12 +67,12 @@ int8_t HMC_self_test() {
 
     i2c_writeBytes(HMC_SERIAL_ADDR, tx_buf, tx_len);
 
-    HMC_setScale(5.0);
-    HMC_setMode(HMC_MEASURE_CONTIN);
+    hmc_setScale(5.0);
+    hmc_setMode(HMC_MEASURE_CONTIN);
 
     delay(6000); // Wait for 6 ms
 
-    HMC_get_raw_Data(&mx, &my, &mz);
+    hmc_get_raw_Data(&mx, &my, &mz);
 
     if (mx <= HMC_SELFTEST_POS_5_MIN ||
         mx >= HMC_SELFTEST_POS_5_MAX) {
@@ -87,10 +87,10 @@ int8_t HMC_self_test() {
         retcode = 3;
     }
 
-    return retcode;
+    return (retcode);
 }
 
-void HMC_get_raw_Data(int16_t* mx, int16_t* my, int16_t* mz) {
+void hmc_get_raw_Data(int16_t* mx, int16_t* my, int16_t* mz) {
     uint8_t rx_len = 6;
     uint8_t rx_buf[rx_len];
 
@@ -108,9 +108,9 @@ void HMC_get_raw_Data(int16_t* mx, int16_t* my, int16_t* mz) {
     *mz = (rx_buf[4] << 8) | rx_buf[5];
 }
 
-void HMC_get_Data(int16_t* mx, int16_t* my, int16_t* mz) {
+void hmc_get_Data(int16_t* mx, int16_t* my, int16_t* mz) {
     int16_t t_x, t_y, t_z;
-    HMC_get_raw_Data(&t_x, &t_y, &t_z);
+    hmc_get_raw_Data(&t_x, &t_y, &t_z);
 
     t_x = t_x - hard_iron[0];
     t_y = t_y - hard_iron[1];
@@ -121,26 +121,26 @@ void HMC_get_Data(int16_t* mx, int16_t* my, int16_t* mz) {
     *mz = ((int32_t)t_z * soft_n[2]) / soft_d[2];
 }
 
-void HMC_get_scaled_Data(float* mx, float* my, float* mz) {
+void hmc_get_scaled_Data(float* mx, float* my, float* mz) {
     int16_t t_x, t_y, t_z;
-    HMC_get_Data(&t_x, &t_y, &t_z);
+    hmc_get_Data(&t_x, &t_y, &t_z);
 
     *mx = digital_resolution * t_x;
     *my = digital_resolution * t_y;
     *mz = digital_resolution * t_z;
 }
 
-int8_t HMC_setMode(uint8_t mode) {
+int8_t hmc_setMode(uint8_t mode) {
     int8_t error_code = 0;
     if (mode <= HMC_MEASURE_IDLE) {
         i2c_writeBytes(HMC_MODE_REG, &mode, 1);
     } else
         error_code = -1;
-    return error_code;
+    return (error_code);
 }
 
 // TODO accept predefined value instead of float
-int8_t HMC_setScale(float gauss) {
+int8_t hmc_setScale(float gauss) {
     uint8_t reg_value = 0x00;
     int8_t error_code = 0;
 
@@ -176,6 +176,6 @@ int8_t HMC_setScale(float gauss) {
         reg_value = reg_value << 5;
         i2c_writeBytes(HMC_CFG_B_REG, &reg_value, 1);
     }
-    return error_code;
+    return (error_code);
 }
 

@@ -25,7 +25,7 @@ MAVLINK_HELPER mavlink_status_t* mavlink_get_channel_status(uint8_t chan)
 #else
 	static mavlink_status_t m_mavlink_status[MAVLINK_COMM_NUM_BUFFERS];
 #endif
-	return &m_mavlink_status[chan];
+	return (&m_mavlink_status[chan]);
 }
 #endif
 
@@ -42,7 +42,7 @@ MAVLINK_HELPER mavlink_message_t* mavlink_get_channel_buffer(uint8_t chan)
 #else
 	static mavlink_message_t m_mavlink_buffer[MAVLINK_COMM_NUM_BUFFERS];
 #endif
-	return &m_mavlink_buffer[chan];
+	return (&m_mavlink_buffer[chan]);
 }
 #endif
 
@@ -93,7 +93,7 @@ MAVLINK_HELPER uint16_t mavlink_finalize_message_chan(mavlink_message_t* msg, ui
 	mavlink_ck_a(msg) = (uint8_t)(msg->checksum & 0xFF);
 	mavlink_ck_b(msg) = (uint8_t)(msg->checksum >> 8);
 
-	return length + MAVLINK_NUM_NON_PAYLOAD_BYTES;
+	return (length + MAVLINK_NUM_NON_PAYLOAD_BYTES);
 }
 
 
@@ -104,7 +104,7 @@ MAVLINK_HELPER uint16_t mavlink_finalize_message_chan(mavlink_message_t* msg, ui
 MAVLINK_HELPER uint16_t mavlink_finalize_message(mavlink_message_t* msg, uint8_t system_id, uint8_t component_id,
 						 uint8_t min_length, uint8_t length, uint8_t crc_extra)
 {
-    return mavlink_finalize_message_chan(msg, system_id, component_id, MAVLINK_COMM_0, min_length, length, crc_extra);
+    return (mavlink_finalize_message_chan(msg, system_id, component_id, MAVLINK_COMM_0, min_length, length, crc_extra));
 }
 #else
 MAVLINK_HELPER uint16_t mavlink_finalize_message(mavlink_message_t* msg, uint8_t system_id, uint8_t component_id,
@@ -185,7 +185,7 @@ MAVLINK_HELPER uint16_t mavlink_msg_to_send_buffer(uint8_t *buffer, const mavlin
 	ck[0] = (uint8_t)(msg->checksum & 0xFF);
 	ck[1] = (uint8_t)(msg->checksum >> 8);
 
-	return MAVLINK_NUM_NON_PAYLOAD_BYTES + (uint16_t)msg->len;
+	return (MAVLINK_NUM_NON_PAYLOAD_BYTES + (uint16_t)msg->len);
 }
 
 union __mavlink_bitfield {
@@ -423,7 +423,7 @@ MAVLINK_HELPER uint8_t mavlink_frame_char_buffer(mavlink_message_t* rxmsg,
 		r_message->checksum = _MAV_PAYLOAD(rxmsg)[status->packet_idx] | (_MAV_PAYLOAD(rxmsg)[status->packet_idx+1]<<8);
 	}
 
-	return status->msg_received;
+	return (status->msg_received);
 }
 
 /**
@@ -469,11 +469,11 @@ MAVLINK_HELPER uint8_t mavlink_frame_char_buffer(mavlink_message_t* rxmsg,
  */
 MAVLINK_HELPER uint8_t mavlink_frame_char(uint8_t chan, uint8_t c, mavlink_message_t* r_message, mavlink_status_t* r_mavlink_status)
 {
-	return mavlink_frame_char_buffer(mavlink_get_channel_buffer(chan),
+	return (mavlink_frame_char_buffer(mavlink_get_channel_buffer(chan),
 					 mavlink_get_channel_status(chan),
 					 c,
 					 r_message,
-					 r_mavlink_status);
+					 r_mavlink_status));
 }
 
 
@@ -533,9 +533,9 @@ MAVLINK_HELPER uint8_t mavlink_parse_char(uint8_t chan, uint8_t c, mavlink_messa
 		    rxmsg->len = 0;
 		    mavlink_start_checksum(rxmsg);
 	    }
-	    return 0;
+	    return (0);
     }
-    return msg_received;
+    return (msg_received);
 }
 
 /**
@@ -636,7 +636,7 @@ MAVLINK_HELPER uint8_t put_bitfield_n_by_index(int32_t b, uint8_t bits, uint8_t 
 	*r_bit_index = i_bit_index;
 	// If a partly filled byte is present, mark this as consumed
 	if (i_bit_index != 7) i_byte_index++;
-	return i_byte_index - packet_index;
+	return (i_byte_index - packet_index);
 }
 
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
@@ -681,9 +681,9 @@ MAVLINK_HELPER void _mavlink_send_uart(mavlink_channel_t chan, const char *buf, 
 MAVLINK_HELPER uint8_t is_sys_comp_match(uint8_t target_sysid, uint8_t target_compid) {
     if (target_sysid == mavlink_system.sysid
      && target_compid == mavlink_system.compid) {
-        return 1;
+        return (1);
     }
-    return 0;
+    return (0);
 }
 
 MAVLINK_HELPER void mavlink_send_msg(mavlink_message_t* msg) {
@@ -691,7 +691,7 @@ MAVLINK_HELPER void mavlink_send_msg(mavlink_message_t* msg) {
     uint16_t len;
 
     len = mavlink_msg_to_send_buffer(buf, msg);
-    BT_send(buf, len);
+    bt_send(buf, len);
 }
 
 #endif /* _MAVLINK_HELPERS_H_ */

@@ -382,19 +382,19 @@
 
 #define USE_CALIBRATED_MASK (CALIBRATED_GYROX | CALIBRATED_GYROY | CALIBRATED_GYROZ)
 
-void MPU6050_init();
-void MPU6050_calibration();
+void mpu6050_init();
+void mpu6050_calibration();
 
-uint8_t MPU6050_selfTest();
+uint8_t mpu6050_selfTest();
 
-void MPU6050_setClockSource(uint8_t source);
-void MPU6050_setFullScaleGyroRange(uint8_t range);
-void MPU6050_setFullScaleAccelRange(uint8_t range);
-void MPU6050_setSleepEnabled(uint8_t enabled);
-void MPU6050_setBypassMode(uint8_t enabled);
-void MPU6050_setDLPFMode(uint8_t mode);
+void mpu6050_setClockSource(uint8_t source);
+void mpu6050_setFullScaleGyroRange(uint8_t range);
+void mpu6050_setFullScaleAccelRange(uint8_t range);
+void mpu6050_setSleepEnabled(uint8_t enabled);
+void mpu6050_setBypassMode(uint8_t enabled);
+void mpu6050_setDLPFMode(uint8_t mode);
 
-void MPU6050_getRawData(int16_t* ax,
+void mpu6050_getRawData(int16_t* ax,
                         int16_t* ay,
                         int16_t* az,
                         int16_t* gx,
@@ -402,7 +402,7 @@ void MPU6050_getRawData(int16_t* ax,
                         int16_t* gz,
                         int16_t* t);
 
-void MPU6050_getData(int16_t* ax,
+void mpu6050_getData(int16_t* ax,
                      int16_t* ay,
                      int16_t* az,
                      int16_t* gx,
@@ -410,7 +410,7 @@ void MPU6050_getData(int16_t* ax,
                      int16_t* gz,
                      int16_t* t);
 
-void MPU6050_getScaledData(float* ax,
+void mpu6050_getScaledData(float* ax,
                            float* ay,
                            float* az,
                            float* gx,

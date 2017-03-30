@@ -39,7 +39,7 @@ int main(void) {
     while (1) {
         delay(1000);
 #ifdef MPU6050_ENABLED
-        MPU6050_getScaledData(&params[PARAM_AX].val,
+        mpu6050_getScaledData(&params[PARAM_AX].val,
                               &params[PARAM_AY].val,
                               &params[PARAM_AZ].val,
                               &params[PARAM_GX].val,
@@ -56,27 +56,27 @@ int main(void) {
         params[PARAM_FL_WHEEL].val = rover_dist.FL;
         params[PARAM_BR_WHEEL].val = rover_dist.BR;
 
-        if (BT_get_rx(&rx_c, 1)) {
+        if (bt_get_rx(&rx_c, 1)) {
             if (mavlink_parse_char(MAVLINK_COMM_0, rx_c, &msg, &status)) {
                 handle_mavlink_message(&msg);
             }
             param_queued_send_routine();
         }
     }
-    return 0;
+    return (0);
 }
 
 void setup() {
-    Rover_init();
+    rover_init();
     timers_init();
     uart_init();
     i2c_init();
     mavlink_sys_update(MAV_MODE_AUTO_ARMED, MAV_STATE_STANDBY);
     timer_mss1_start();
 #ifdef MPU6050_ENABLED
-    MPU6050_init();
+    mpu6050_init();
 #ifdef MPU6050_SELFTEST
-    if (MPU6050_selfTest()) {
+    if (mpu6050_selfTest()) {
         mavlink_message_t msg;
 
         // TODO retcode into msg
@@ -89,7 +89,7 @@ void setup() {
         mavlink_send_msg(&msg);
     }
 #endif // MPU6050_SELFTEST
-    MPU6050_calibration();
+    mpu6050_calibration();
 #endif // MPU6050_ENABLED
 #ifdef HMC_ENABLED
     HMC_init();

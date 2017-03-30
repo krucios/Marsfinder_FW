@@ -84,7 +84,7 @@ void handle_mavlink_message(mavlink_message_t* msg) {
                         params[read.param_index].val, MAVLINK_TYPE_FLOAT,
                         ONBOARD_PARAM_COUNT, read.param_index);
                 len = mavlink_msg_to_send_buffer(buffer, &message);
-                BT_send(buffer, len);
+                bt_send(buffer, len);
             }
         }
     }
@@ -111,7 +111,7 @@ void handle_mavlink_message(mavlink_message_t* msg) {
                                 MAVLINK_TYPE_FLOAT,
                                 ONBOARD_PARAM_COUNT, i);
                         len = mavlink_msg_to_send_buffer(buffer, &message);
-                        BT_send(buffer, len);
+                        bt_send(buffer, len);
                     }
                 }
             }

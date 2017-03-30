@@ -52,11 +52,11 @@ extern Rover_distance_t rover_dist;
 extern Rover_direction  rover_state;
 extern Rover_mode       rover_mode;
 
-void Rover_init();
-void Rover_go(const Rover_direction dir);
-void Rover_move(const Rover_direction dir, const uint32_t unit); // sm for FW and BW deg for RL and RR
-void Rover_move(const Rover_direction dir);
-void Rover_move_routine();
+void rover_init();
+void rover_go(const Rover_direction dir);
+void rover_move(const Rover_direction dir, const uint32_t unit); // sm for FW and BW deg for RL and RR
+void rover_movei(const Rover_direction dir);
+void rover_move_routine();
 
 void PWM_tach_IRQHandler(void);
 
