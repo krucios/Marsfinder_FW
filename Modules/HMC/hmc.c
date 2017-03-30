@@ -53,6 +53,43 @@ void HMC_calibration() {
     soft_n[2] = avg;
 }
 
+int8_t HMC_self_test() {
+    uint8_t retcode = 0;
+
+    int16_t mx, my, mz;
+
+    // TODO remove this copypaste
+    uint8_t tx_len = 2;
+    uint8_t tx_buf[tx_len];
+
+    tx_buf[0] = HMC_CFG_A_REG;
+    tx_buf[1] = 0x71; // Sample rate: 30 Hz and 8 averaged measurement per sample
+
+    i2c_writeBytes(HMC_SERIAL_ADDR, tx_buf, tx_len);
+
+    HMC_setScale(5.0);
+    HMC_setMode(HMC_MEASURE_CONTIN);
+
+    delay(6000); // Wait for 6 ms
+
+    HMC_get_raw_Data(&mx, &my, &mz);
+
+    if (mx <= HMC_SELFTEST_POS_5_MIN ||
+        mx >= HMC_SELFTEST_POS_5_MAX) {
+        retcode = 1;
+    }
+    if (my <= HMC_SELFTEST_POS_5_MIN ||
+        my >= HMC_SELFTEST_POS_5_MAX) {
+        retcode = 2;
+    }
+    if (mz <= HMC_SELFTEST_POS_5_MIN ||
+        mz >= HMC_SELFTEST_POS_5_MAX) {
+        retcode = 3;
+    }
+
+    return retcode;
+}
+
 void HMC_get_raw_Data(int16_t* mx, int16_t* my, int16_t* mz) {
     uint8_t rx_len = 6;
     uint8_t rx_buf[rx_len];
@@ -102,6 +139,7 @@ int8_t HMC_setMode(uint8_t mode) {
     return error_code;
 }
 
+// TODO accept predefined value instead of float
 int8_t HMC_setScale(float gauss) {
     uint8_t reg_value = 0x00;
     int8_t error_code = 0;

@@ -5,6 +5,7 @@
  *      Author: kruci_000
  */
 
+#include <Modules/Rover_Control/rover_control.h>
 #include <Modules/Time/time.h>
 #include <Modules/Time/timer.h>
 #include <Modules/UART/uart.h>
@@ -14,17 +15,15 @@
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/MAVLink/handlers.h>
 #include <Modules/MAVLink/system.h>
-#include <Modules/AHRS/MadgwickAHRS.h>
 #include <Modules/Parameters_Holder/param_holder.h>
 
 #include <Helpers/sys_helper/sys_helper.h>
-#include <Helpers/conversion_defines.h>
 
 #include <hal.h>
 #include <MC_hw_platform.h>
 #include <m2sxxx.h>
 
-#include <stdio.h>
+#include <defines.h>
 
 void setup(void);
 
@@ -39,19 +38,24 @@ int main(void) {
 
     while (1) {
         delay(1000);
+#ifdef MPU6050_ENABLED
+        MPU6050_getScaledData(&params[PARAM_AX].val,
+                              &params[PARAM_AY].val,
+                              &params[PARAM_AZ].val,
+                              &params[PARAM_GX].val,
+                              &params[PARAM_GY].val,
+                              &params[PARAM_GZ].val,
+                              &params[PARAM_T].val);
+#endif // MPU6050_ENABLED
+#ifdef HMC_ENABLED
+        HMC_get_scaled_Data(&params[PARAM_MX].val,
+                            &params[PARAM_MY].val,
+                            &params[PARAM_MZ].val);
+#endif // HMC_ENABLED
 
-        MPU6050_getScaledData(&params.param[PARAM_AX],
-                              &params.param[PARAM_AY],
-                              &params.param[PARAM_AZ],
-                              &params.param[PARAM_GX],
-                              &params.param[PARAM_GY],
-                              &params.param[PARAM_GZ],
-                              &params.param[PARAM_T]);
-/* HMC isn't working now
-        HMC_get_scaled_Data(&params.param[PARAM_MX],
-                            &params.param[PARAM_MY],
-                            &params.param[PARAM_MZ]);
-*/
+        params[PARAM_FL_WHEEL].val = rover_dist.FL;
+        params[PARAM_BR_WHEEL].val = rover_dist.BR;
+
         if (BT_get_rx(&rx_c, 1)) {
             if (mavlink_parse_char(MAVLINK_COMM_0, rx_c, &msg, &status)) {
                 handle_mavlink_message(&msg);
@@ -63,12 +67,48 @@ int main(void) {
 }
 
 void setup() {
+    Rover_init();
     timers_init();
     uart_init();
     i2c_init();
     mavlink_sys_update(MAV_MODE_AUTO_ARMED, MAV_STATE_STANDBY);
+    timer_mss1_start();
+#ifdef MPU6050_ENABLED
     MPU6050_init();
-    // HMC_init();
+#ifdef MPU6050_SELFTEST
+    if (MPU6050_selfTest()) {
+        mavlink_message_t msg;
+
+        // TODO retcode into msg
+        mavlink_msg_statustext_pack(
+                mavlink_system.sysid,
+                mavlink_system.compid,
+                &msg,
+                MAV_SEVERITY_CRITICAL,
+                "MPU6050 SELFTEST FAILED");
+        mavlink_send_msg(&msg);
+    }
+#endif // MPU6050_SELFTEST
+    MPU6050_calibration();
+#endif // MPU6050_ENABLED
+#ifdef HMC_ENABLED
+    HMC_init();
+#ifdef HMC_SELFTEST
+    if (HMC_self_test()) {
+        mavlink_message_t msg;
+
+        // TODO retcode into msg
+        mavlink_msg_statustext_pack(
+                mavlink_system.sysid,
+                mavlink_system.compid,
+                &msg,
+                MAV_SEVERITY_CRITICAL,
+                "HMC SELFTEST FAILED");
+        mavlink_send_msg(&msg);
+    }
+#endif // HMC_SELFTEST
+#endif // HMC_ENABLED
+    timer_mss2_start();
 }
 
 

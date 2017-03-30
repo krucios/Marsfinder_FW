@@ -7,13 +7,17 @@
 
 #include "time.h"
 #include "timer.h"
+#include "defines.h"
 
 #include <Helpers/conversion_defines.h>
 
 #include <Modules/I2C/i2c.h>
+#include <Modules/Rover_Control/rover_control.h>
 #include <Modules/Parameters_Holder/param_holder.h>
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/AHRS/MadgwickAHRS.h>
+#include <Modules/MPU6050/mpu6050.h>
+#include <Modules/HMC/hmc.h>
 
 /*------------------------------------------------------------------------------
  * Service the I2C timeout functionality.
@@ -23,6 +27,7 @@ void SysTick_Handler(void) {
 }
 void FabricIrq0_IRQHandler(void) {
     I2C_isr(&g_core_i2c);
+    PWM_tach_IRQHandler();
 }
 
 /*-----------------------------------------------------------------------------
@@ -30,6 +35,14 @@ void FabricIrq0_IRQHandler(void) {
  */
 void Timer1_IRQHandler() {
     mavlink_message_t msg;
+
+    MadgwickAHRSupdateIMU(
+               DEG_TO_RAD(params[PARAM_GX].val),
+               DEG_TO_RAD(params[PARAM_GY].val),
+               DEG_TO_RAD(params[PARAM_GZ].val),
+                          params[PARAM_AX].val,
+                          params[PARAM_AY].val,
+                          params[PARAM_AZ].val);
 
     mavlink_msg_heartbeat_pack(
             mavlink_system.sysid,
@@ -93,19 +106,19 @@ void Timer1_IRQHandler() {
             mavlink_system.compid,
             &msg,
             usec(),
-            params.param[PARAM_AX],
-            params.param[PARAM_AY],
-            params.param[PARAM_AZ],
-            params.param[PARAM_GX],
-            params.param[PARAM_GY],
-            params.param[PARAM_GZ],
-            params.param[PARAM_MX],
-            params.param[PARAM_MY],
-            params.param[PARAM_MZ],
+            params[PARAM_AX].val,
+            params[PARAM_AY].val,
+            params[PARAM_AZ].val,
+            params[PARAM_GX].val,
+            params[PARAM_GY].val,
+            params[PARAM_GZ].val,
+            params[PARAM_MX].val,
+            params[PARAM_MY].val,
+            params[PARAM_MZ].val,
             0,
             0,
             0,
-            params.param[PARAM_T],
+            params[PARAM_T].val,
             (1 << 12) | ((1 << 9) - 1));
     mavlink_send_msg(&msg);
 
@@ -118,19 +131,21 @@ void Timer1_IRQHandler() {
             q1,
             q2,
             q3,
-            params.param[PARAM_GX] * DEG_TO_RAD,
-            params.param[PARAM_GY] * DEG_TO_RAD,
-            params.param[PARAM_GZ] * DEG_TO_RAD);
+            DEG_TO_RAD(params[PARAM_GX].val),
+            DEG_TO_RAD(params[PARAM_GY].val),
+            DEG_TO_RAD(params[PARAM_GZ].val));
     mavlink_send_msg(&msg);
-
-    MadgwickAHRSupdateIMU(params.param[PARAM_GX] * DEG_TO_RAD,
-                          params.param[PARAM_GY] * DEG_TO_RAD,
-                          params.param[PARAM_GZ] * DEG_TO_RAD,
-                          params.param[PARAM_AX],
-                          params.param[PARAM_AY],
-                          params.param[PARAM_AZ]);
 
     usec_service_routine();
 
     MSS_TIM1_clear_irq();
+}
+
+
+/*-------------------------------------
+ * Read values from sensors
+ */
+void Timer2_IRQHandler() {
+    Rover_move_routine();
+    MSS_TIM2_clear_irq();
 }

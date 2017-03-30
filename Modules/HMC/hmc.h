@@ -26,16 +26,26 @@
 #define HMC_MEASURE_SINGLE  0x1
 #define HMC_MEASURE_IDLE    0x2
 
+#define HMC_MODE_NORMAL     0x0
+#define HMC_MODE_POS_BIAS   0x1
+#define HMC_MODE_NEG_BIAS   0x2
+
+#define HMC_SELFTEST_POS_5_MIN    243
+#define HMC_SELFTEST_POS_5_MAX    575
+
 
 #define HMC_CALIBRATION_SAMPLES_COUNT 1024
 
 void HMC_init();
 void HMC_calibration();
 
+int8_t HMC_self_test();
+
 void HMC_get_raw_Data(int16_t* mx, int16_t* my, int16_t* mz);
 void HMC_get_Data(int16_t* mx, int16_t* my, int16_t* mz);
 void HMC_get_scaled_Data(float* mx, float* my, float* mz);
 
+// TODO implement it! int8_t HMC_setMesMode(uint8_t mode);
 int8_t HMC_setMode(uint8_t mode);
 int8_t HMC_setScale(float gauss);
 

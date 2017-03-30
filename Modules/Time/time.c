@@ -14,16 +14,16 @@ uint32_t msec = 0;
 
 inline uint64_t usec() {
     return (uint64_t)(1000000 * sec)
-         + (1000 * msec)
-         + ((MSS_SYS_M3_CLK_FREQ / 20) - MSS_TIM1_get_current_value()) / 50;
+         + (MSEC_PER_SEC * msec)
+         + (TIMER_PERIOD(USR_TIMER_FREQ) - MSS_TIM1_get_current_value()) / 50;
          //  TimVal * TimPeriod (us) / TimReloadVal
 }
 
 void usec_service_routine() {
-    msec += 50;
-    if (msec >= 1000) {
+    msec += USR_PERIOD_MSEC;
+    if (msec >= MSEC_PER_SEC) {
         sec++;
-        msec %= 1000;
+        msec %= MSEC_PER_SEC;
     }
 }
 

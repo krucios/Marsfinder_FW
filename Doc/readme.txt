@@ -1,0 +1,1 @@
+In this folder placed descriptions and images.
