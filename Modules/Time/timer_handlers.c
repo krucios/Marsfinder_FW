@@ -2,7 +2,7 @@
  * timer_handlers.c
  *
  *  Created on: 21 Jul 2016
- *      Author: S2400105
+ *      Author: Andrei.PAzniak (krucios@mail.ru)
  */
 
 #include "time.h"

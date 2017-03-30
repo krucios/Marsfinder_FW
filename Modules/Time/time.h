@@ -2,7 +2,7 @@
  * time.h
  *
  *  Created on: 20 Jul 2016
- *      Author: S2400105
+ *      Author: Andrei.Pazniak (krucios@mail.ru)
  */
 
 #ifndef MODULES_TIME_TIME_H_

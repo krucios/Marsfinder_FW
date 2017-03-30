@@ -2,7 +2,7 @@
  * rover_control.h
  *
  *  Created on: 05 марта 2016 г.
- *      Author: kruci_000
+ *      Author: Andrei.PAzniak (krucios@mail.ru)
  */
 
 #ifndef ROVER_CONTROL_H_
@@ -27,6 +27,12 @@ typedef enum {
     STOP
 } Rover_direction;
 
+typedef enum {
+    MANUAL_CTRL,
+    CMD_EXEC,
+    AUTOPILOT
+} Rover_mode;
+
 /**
  *
  *  FL -> []---[] <- FR
@@ -43,11 +49,13 @@ typedef struct {
 } Rover_distance_t;
 
 extern Rover_distance_t rover_dist;
-extern Rover_direction rover_state;
+extern Rover_direction  rover_state;
+extern Rover_mode       rover_mode;
 
 void Rover_init();
 void Rover_go(const Rover_direction dir);
 void Rover_move(const Rover_direction dir, const uint32_t unit); // sm for FW and BW deg for RL and RR
+void Rover_move(const Rover_direction dir);
 void Rover_move_routine();
 
 void PWM_tach_IRQHandler(void);

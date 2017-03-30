@@ -2,7 +2,7 @@
  * time.c
  *
  *  Created on: 20 Jul 2016
- *      Author: S2400105
+ *      Author: Andrei.Pazniak (krucios@mail.ru)
  */
 
 #include "time.h"

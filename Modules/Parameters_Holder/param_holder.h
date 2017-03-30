@@ -2,7 +2,7 @@
  * param_holder.h
  *
  *  Created on: 20 Jul 2016
- *      Author: S2400105
+ *      Author: Andrei.Pazniak (krucios@mail.ru)
  */
 
 #ifndef MODULES_PARAMETERS_HOLDER_PARAM_HOLDER_H_

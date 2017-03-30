@@ -1,8 +1,8 @@
 /*
  * main.c
  *
- *  Created on: 14 февр. 2016 г.
- *      Author: kruci_000
+ *  Created on: 30 Mar 2017
+ *      Author: Andrei.PAzniak (krucios@mail.ru)
  */
 
 #include <Modules/Rover_Control/rover_control.h>

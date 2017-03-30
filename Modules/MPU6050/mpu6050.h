@@ -2,7 +2,7 @@
  * mpu6050.h
  *
  *  Created on: 18.10.2015
- *      Author: kruci_000
+ *      Author: Andrei.Pazniak (krucios@mail.ru)
  */
 
 #ifndef MPU6050_H_

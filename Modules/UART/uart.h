@@ -2,7 +2,7 @@
  * uart.h
  *
  *  Created on: 20 Jul 2016
- *      Author: S2400105
+ *      Author: Andrei.PAzniak (krucios@mail.ru)
  */
 
 #ifndef MODULES_UART_UART_H_

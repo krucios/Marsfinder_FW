@@ -1,8 +1,8 @@
 /*
  * defines.h
  *
- *  Created on: 22 Jul 2016
- *      Author: S2400105
+ *  Created on: 30 Mar 2017
+ *      Author: Andrei.PAzniak (krucios@mail.ru)
  */
 
 #ifndef DEFINES_H_

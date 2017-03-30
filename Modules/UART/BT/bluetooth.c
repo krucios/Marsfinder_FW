@@ -2,7 +2,7 @@
  * bluetooth.c
  *
  *  Created on: 21 июля 2016 г.
- *      Author: kruci_000
+ *      Author: Andrei.PAzniak (krucios@mail.ru)
  */
 
 #include "bluetooth.h"
