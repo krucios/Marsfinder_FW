@@ -13,7 +13,8 @@
 //   confirmation
 //   param 1-7
 
-import QtQuick 2.2
+import QtQuick 2.5
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 
@@ -30,8 +31,34 @@ FactPanel {
 
     CustomCommandWidgetController { id: controller; factPanel: panel }
 
-    // Your own custom changes start here - everything else above is always required
+    function openFile(fileUrl) {
+        var request = new XMLHttpRequest();
+        request.open("GET", fileUrl, false);
+        request.send(null);
+        return request.responseText;
+    }
 
+    function saveFile(fileUrl, text) {
+        var request = new XMLHttpRequest();
+        request.open("PUT", fileUrl, false);
+        request.send(text);
+        return request.status;
+    }
+
+    FileDialog {
+        id: openFileDialog
+        nameFilters: ["Text files (*.txt)", "All files (*)"]
+        onAccepted: textEdit.text = openFile(openFileDialog.fileUrl)
+    }
+
+    FileDialog {
+        id: saveFileDialog
+        selectExisting: false
+        nameFilters: ["Text files (*.txt)", "All files (*)"]
+        onAccepted: saveFile(saveFileDialog.fileUrl, textEdit.text)
+    }
+
+    // Your own custom changes start here - everything else above is always required
     Column {
         id: main_col
         focus: true
@@ -42,10 +69,10 @@ FactPanel {
 
         property string direction_text: "Stop"
 
+/*  Doesn't work
         Keys.onUpPressed: {
             if (dir_FB < 1) {
                 dir_FB = dir_FB + 1
-                // console.log('Up pressed: ' + dir_FB)
                 if (dir_FB) {
                     direction_text = "Forward"
                     controller.sendCommand(31010,0, 0, 0, 0, 0, 0, 0, 0, 0) // Forward
@@ -58,7 +85,6 @@ FactPanel {
         Keys.onDownPressed: {
             if (dir_FB > -1) {
                 dir_FB = dir_FB - 1
-                // console.log('Down pressed: ' + dir_FB)
                 if (dir_FB == -1) {
                     direction_text = "Backward"
                     controller.sendCommand(31010,0, 0, 1, 0, 0, 0, 0, 0, 0) // Backward
@@ -67,12 +93,10 @@ FactPanel {
                     controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
                 }
             }
-
         }
         Keys.onLeftPressed: {
             if (dir_LR < 1) {
                 dir_LR = dir_LR + 1
-                // console.log('Left pressed: ' + dir_LR)
                 if (dir_LR) {
                     direction_text = "Left"
                     controller.sendCommand(31010,0, 0, 2, 0, 0, 0, 0, 0, 0) // Left
@@ -81,12 +105,10 @@ FactPanel {
                     controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
                 }
             }
-
         }
         Keys.onRightPressed: {
             if (dir_LR > -1) {
                 dir_LR = dir_LR - 1
-                // console.log('Right pressed: ' + dir_LR)
                 if (dir_LR == -1) {
                     direction_text = "Right"
                     controller.sendCommand(31010,0, 0, 3, 0, 0, 0, 0, 0, 0) // Right
@@ -95,23 +117,15 @@ FactPanel {
                     controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
                 }
             }
-
         }
-
+*/
         // The QGCButton control is provided by QGroundControl.Controls. It is a wrapper around
         // the standard Qml Button element which using the default QGC font and color palette.
 
         ColumnLayout {
             focus: true
-            Label {
-                text: "Direction: "
-                color: "white"
-            }
-
-            Label {
-                text: main_col.direction_text
-                color: "white"
-            }
+            Label { text: "Direction: "; color: "white" }
+            Label { text: main_col.direction_text; color: "white" }
 
             RowLayout {
                 Button {
@@ -132,10 +146,7 @@ FactPanel {
                     }
                 }
 
-                SpinBox {
-                    id: forward_sb
-                    suffix: " sm"
-                }
+                SpinBox { id: forward_sb; suffix: " sm"; maximumValue: 1000; minimumValue: 0 }
             }
 
             RowLayout {
@@ -157,10 +168,7 @@ FactPanel {
                     }
                 }
 
-                SpinBox {
-                    id: backward_sb
-                    suffix: " sm"
-                }
+                SpinBox { id: backward_sb; suffix: " sm"; maximumValue: 1000; minimumValue: 0 }
             }
 
             RowLayout {
@@ -182,10 +190,7 @@ FactPanel {
                     }
                 }
 
-                SpinBox {
-                    id: left_sb
-                    suffix: " sm"
-                }
+                SpinBox { id: left_sb; suffix: " deg"; maximumValue: 180; minimumValue: -180 }
             }
 
             RowLayout {
@@ -207,10 +212,7 @@ FactPanel {
                     }
                 }
 
-                SpinBox {
-                    id: right_sb
-                    suffix: " sm"
-                }
+                SpinBox { id: right_sb; suffix: " deg"; maximumValue: 180; minimumValue: -180 }
             }
 
             Button {
@@ -220,6 +222,22 @@ FactPanel {
                     main_col.direction_text = "Stop"
                     controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0)
                 }
+            }
+
+            RowLayout {
+                Button {
+                    text: "Open"
+                    onClicked: openFileDialog.open()
+                }
+                Button {
+                    text: "Save"
+                    onClicked: saveFileDialog.open()
+                }
+            }
+
+            TextArea {
+                id: textEdit
+                text: "Your mission here";
             }
         }
     }
