@@ -108,18 +108,18 @@ void rover_go(const Rover_direction dir) {
     }
 }
 
-void rover_move(const Rover_direction dir, const uint32_t units) {
-    if (dir != STOP) {
-        if (dir == FORWARD || dir == BACKWARD) {
+void rover_move(const Rover_cmd_t cmd) {
+    if (cmd.dir != STOP) {
+        if (cmd.dir == FORWARD || cmd.dir == BACKWARD) {
             int32_t start_value = (rover_dist.FL + rover_dist.BR) / 2;
 
             target_distance = start_value;
-            if (dir == FORWARD) {
-                target_distance += units;
+            if (cmd.dir == FORWARD) {
+                target_distance += cmd.units;
             } else {
-                target_distance -= units;
+                target_distance -= cmd.units;
             }
-        } else if (dir == ROUND_LEFT || dir == ROUND_RIGHT) {
+        } else if (cmd.dir == ROUND_LEFT || cmd.dir == ROUND_RIGHT) {
             float q[4] = {q0, q1, q2, q3};
             float pitch, roll, yaw;
             int32_t yaw_num;
@@ -128,10 +128,10 @@ void rover_move(const Rover_direction dir, const uint32_t units) {
             yaw_num = RAD_TO_DEG(yaw);
 
             target_angle = yaw_num;
-            if (dir == ROUND_RIGHT) {
-                target_angle += units;
+            if (cmd.dir == ROUND_RIGHT) {
+                target_angle += cmd.units;
             } else {
-                target_angle -= units;
+                target_angle -= cmd.units;
             }
 
             while (target_angle < -180) {
@@ -141,7 +141,7 @@ void rover_move(const Rover_direction dir, const uint32_t units) {
                 target_angle -= 360;
             }
         }
-        rover_go(dir);
+        rover_go(cmd.dir);
         rover_mode = CMD_EXEC;
     }
 }

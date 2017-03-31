@@ -12,7 +12,7 @@
 #include "mavlink_helpers.h"
 
 #include <Modules/UART/uart.h>
-#include <Modules/Parameters_Holder/param_holder.h>
+#include <Modules/Storage/Parameters_Holder/param_holder.h>
 
 #include <stdio.h>
 

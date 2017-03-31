@@ -13,7 +13,7 @@
 
 #include <Modules/I2C/i2c.h>
 #include <Modules/Rover_Control/rover_control.h>
-#include <Modules/Parameters_Holder/param_holder.h>
+#include <Modules/Storage/Parameters_Holder/param_holder.h>
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/AHRS/MadgwickAHRS.h>
 #include <Modules/MPU6050/mpu6050.h>

@@ -24,7 +24,8 @@ typedef enum {
     BACKWARD,
     ROUND_LEFT,
     ROUND_RIGHT,
-    STOP
+    STOP,
+    INVALID
 } Rover_direction;
 
 typedef enum {
@@ -32,6 +33,11 @@ typedef enum {
     CMD_EXEC,
     AUTOPILOT
 } Rover_mode;
+
+typedef struct {
+    Rover_direction dir;
+    uint32_t        units;
+} Rover_cmd_t;
 
 /**
  *
@@ -54,7 +60,7 @@ extern Rover_mode       rover_mode;
 
 void rover_init();
 void rover_go(const Rover_direction dir);
-void rover_move(const Rover_direction dir, const uint32_t unit); // sm for FW and BW deg for RL and RR
+void rover_move(const Rover_cmd_t cmd);
 void rover_movei(const Rover_direction dir);
 void rover_move_routine();
 

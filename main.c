@@ -15,7 +15,7 @@
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/MAVLink/handlers.h>
 #include <Modules/MAVLink/system.h>
-#include <Modules/Parameters_Holder/param_holder.h>
+#include <Modules/Storage/Parameters_Holder/param_holder.h>
 
 #include <Helpers/sys_helper/sys_helper.h>
 

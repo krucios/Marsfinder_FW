@@ -94,7 +94,7 @@
 					</folderInfo>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.864938433.24030476" name="micros.h" rcbsApplicability="disable" resourcePath="Modules/Micros/micros.h" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry excluding="Modules/Motors|Modules/micros|Modules/RoverControl|Modules/Echo|Modules/BMP|Modules/telemetry|Modules/PID|Modules/Micros|Modules/GPS_Parser" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Modules/RoverControl|Modules/micros|Modules/Motors|Modules/Echo|Modules/BMP|Modules/telemetry|Modules/PID|Modules/Micros|Modules/GPS_Parser" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -241,7 +241,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Modules/Motors|Modules/micros|Modules/RoverControl|Modules/Echo|Modules/BMP|Modules/telemetry|Modules/PID|Modules/Micros|Modules/GPS_Parser" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Modules/RoverControl|Modules/micros|Modules/Motors|Modules/Echo|Modules/BMP|Modules/telemetry|Modules/PID|Modules/Micros|Modules/GPS_Parser" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
