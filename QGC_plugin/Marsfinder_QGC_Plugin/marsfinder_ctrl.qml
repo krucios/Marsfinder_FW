@@ -69,56 +69,6 @@ FactPanel {
 
         property string direction_text: "Stop"
 
-/*  Doesn't work
-        Keys.onUpPressed: {
-            if (dir_FB < 1) {
-                dir_FB = dir_FB + 1
-                if (dir_FB) {
-                    direction_text = "Forward"
-                    controller.sendCommand(31010,0, 0, 0, 0, 0, 0, 0, 0, 0) // Forward
-                } else {
-                    direction_text = "Stop"
-                    controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
-                }
-            }
-        }
-        Keys.onDownPressed: {
-            if (dir_FB > -1) {
-                dir_FB = dir_FB - 1
-                if (dir_FB == -1) {
-                    direction_text = "Backward"
-                    controller.sendCommand(31010,0, 0, 1, 0, 0, 0, 0, 0, 0) // Backward
-                } else {
-                    direction_text = "Stop"
-                    controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
-                }
-            }
-        }
-        Keys.onLeftPressed: {
-            if (dir_LR < 1) {
-                dir_LR = dir_LR + 1
-                if (dir_LR) {
-                    direction_text = "Left"
-                    controller.sendCommand(31010,0, 0, 2, 0, 0, 0, 0, 0, 0) // Left
-                } else {
-                    direction_text = "Stop"
-                    controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
-                }
-            }
-        }
-        Keys.onRightPressed: {
-            if (dir_LR > -1) {
-                dir_LR = dir_LR - 1
-                if (dir_LR == -1) {
-                    direction_text = "Right"
-                    controller.sendCommand(31010,0, 0, 3, 0, 0, 0, 0, 0, 0) // Right
-                } else {
-                    direction_text = "Stop"
-                    controller.sendCommand(31010,0, 0, 4, 0, 0, 0, 0, 0, 0) // Stop
-                }
-            }
-        }
-*/
         // The QGCButton control is provided by QGroundControl.Controls. It is a wrapper around
         // the standard Qml Button element which using the default QGC font and color palette.
 
