@@ -183,6 +183,14 @@ FactPanel {
                     text: "Save"
                     onClicked: saveFileDialog.open()
                 }
+                Button {
+                    text: "Download"
+                    // TODO: add download from device handler
+                }
+                Button {
+                    text: "Upload"
+                    // TODO: add upload to device handler
+                }
             }
 
             TextArea {
