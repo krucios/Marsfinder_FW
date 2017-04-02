@@ -30,6 +30,10 @@ void handle_mavlink_message(mavlink_message_t* msg) {
                     handle_mavlink_user_2_cmd(&cmd);
                     result = MAV_RESULT_ACCEPTED; // TODO: check it
                 } break;
+                case MAV_CMD_USER_3: {
+                    handle_mavlink_user_3_cmd(&cmd);
+                    result = MAV_RESULT_ACCEPTED;
+                } break;
                 default: {
                         mavlink_message_t msg;
                         uint8_t buff[50];

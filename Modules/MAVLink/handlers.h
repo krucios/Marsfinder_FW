@@ -18,6 +18,7 @@
 
 void handle_mavlink_user_1_cmd(mavlink_command_long_t* cmd);
 void handle_mavlink_user_2_cmd(mavlink_command_long_t* cmd);
+void handle_mavlink_user_3_cmd(mavlink_command_long_t* cmd);
 void handle_mavlink_message(mavlink_message_t* msg);
 
 #endif /* MODULES_MAVLINK_HANDLERS_H_ */

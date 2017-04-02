@@ -13,6 +13,7 @@
 
 #include <Modules/I2C/i2c.h>
 #include <Modules/Rover_Control/rover_control.h>
+#include <Modules/Mission_planner/mission_ctrl.h>
 #include <Modules/Storage/Parameters_Holder/param_holder.h>
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/AHRS/MadgwickAHRS.h>
@@ -147,5 +148,6 @@ void Timer1_IRQHandler() {
  */
 void Timer2_IRQHandler() {
     rover_move_routine();
+    mctrl_execute_routine();
     MSS_TIM2_clear_irq();
 }

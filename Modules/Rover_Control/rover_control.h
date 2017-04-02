@@ -16,8 +16,8 @@
 
 #define SM_PER_WHEEL_TICK (1u)
 
-#define ROVER_ALLOWED_DIST_DIFF  (10u) // sm
-#define ROVER_ALLOWED_ANGLE_DIFF (10u) // degrees
+#define ROVER_ALLOWED_DIST_DIFF  (5u) // sm
+#define ROVER_ALLOWED_ANGLE_DIFF (15u) // degrees
 
 typedef enum {
     FORWARD,

@@ -6,6 +6,7 @@
  */
 
 #include <Modules/Rover_Control/rover_control.h>
+#include <Modules/Mission_planner/mission_ctrl.h>
 #include <Modules/Time/time.h>
 #include <Modules/Time/timer.h>
 #include <Modules/UART/uart.h>
@@ -59,6 +60,7 @@ int main(void) {
 
 void setup() {
     rover_init();
+    mctrl_init();
     timers_init();
     uart_init();
     i2c_init();
