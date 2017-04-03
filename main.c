@@ -13,9 +13,11 @@
 #include <Modules/I2C/i2c.h>
 #include <Modules/MPU6050/mpu6050.h>
 #include <Modules/HMC/hmc.h>
+#ifdef MAVLINK_EN
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/MAVLink/handlers.h>
 #include <Modules/MAVLink/system.h>
+#endif // MAVLINK_EN
 #include <Modules/Storage/Parameters_Holder/param_holder.h>
 
 #include <Helpers/sys_helper/sys_helper.h>
@@ -34,6 +36,7 @@ int main(void) {
 
     while (1) {
         delay(1000);
+#ifdef MAVLINK_EN
 #ifdef MPU6050_ENABLED
         mpu6050_getScaledData(&params[PARAM_AX].val,
                               &params[PARAM_AY].val,
@@ -54,6 +57,7 @@ int main(void) {
 
         bt_rx_routine();
         param_queued_send_routine();
+#endif // MAVLINK_EN
     }
     return (0);
 }
@@ -64,13 +68,16 @@ void setup() {
     timers_init();
     uart_init();
     i2c_init();
-    mavlink_sys_update(MAV_MODE_AUTO_ARMED, MAV_STATE_STANDBY);
     timer_mss1_start();
+#ifdef MAVLINK_EN
+    mavlink_sys_update(MAV_MODE_AUTO_ARMED, MAV_STATE_STANDBY);
+#endif // MAVLINK_EN
 
 #ifdef MPU6050_ENABLED
     mpu6050_init();
 #ifdef MPU6050_SELFTEST
     if (mpu6050_selfTest()) {
+#ifdef MAVLINK_EN
         mavlink_message_t msg;
 
         // TODO retcode into msg
@@ -81,6 +88,7 @@ void setup() {
                 MAV_SEVERITY_CRITICAL,
                 "MPU6050 SELFTEST FAILED");
         mavlink_send_msg(&msg);
+#endif // MAVLINK_EN
     }
 #endif // MPU6050_SELFTEST
     mpu6050_calibration();
@@ -90,6 +98,7 @@ void setup() {
     HMC_init();
 #ifdef HMC_SELFTEST
     if (HMC_self_test()) {
+#ifdef MAVLINK_EN
         mavlink_message_t msg;
 
         // TODO retcode into msg
@@ -100,6 +109,7 @@ void setup() {
                 MAV_SEVERITY_CRITICAL,
                 "HMC SELFTEST FAILED");
         mavlink_send_msg(&msg);
+#endif // MAVLINK_EN
     }
 #endif // HMC_SELFTEST
 #endif // HMC_ENABLED

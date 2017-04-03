@@ -8,6 +8,7 @@
 #ifndef MODULES_PARAMETERS_HOLDER_PARAM_HOLDER_H_
 #define MODULES_PARAMETERS_HOLDER_PARAM_HOLDER_H_
 
+#ifdef MAVLINK_EN
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/MAVLink/system.h>
 #include <Modules/UART/uart.h>
@@ -36,5 +37,6 @@ extern Onboard_param_t params[ONBOARD_PARAM_COUNT];
 void param_send(uint8_t index);
 void param_queued_send_start(void);
 void param_queued_send_routine(void);
+#endif // MAVLINK_EN
 
 #endif /* MODULES_PARAMETERS_HOLDER_PARAM_HOLDER_H_ */

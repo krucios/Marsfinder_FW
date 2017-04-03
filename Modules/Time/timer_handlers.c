@@ -15,7 +15,9 @@
 #include <Modules/Rover_Control/rover_control.h>
 #include <Modules/Mission_planner/mission_ctrl.h>
 #include <Modules/Storage/Parameters_Holder/param_holder.h>
+#ifdef MAVLINK_EN
 #include <Modules/MAVLink/common/mavlink.h>
+#endif // MAVLINK_EN
 #include <Modules/AHRS/MadgwickAHRS.h>
 #include <Modules/MPU6050/mpu6050.h>
 #include <Modules/HMC/hmc.h>
@@ -44,7 +46,7 @@ void Timer1_IRQHandler() {
                           params[PARAM_AX].val,
                           params[PARAM_AY].val,
                           params[PARAM_AZ].val);
-
+#ifdef MAVLINK_EN
     mavlink_msg_heartbeat_pack(
             mavlink_system.sysid,
             mavlink_system.compid,
@@ -136,7 +138,7 @@ void Timer1_IRQHandler() {
             DEG_TO_RAD(params[PARAM_GY].val),
             DEG_TO_RAD(params[PARAM_GZ].val));
     mavlink_send_msg(&msg);
-
+#endif // MAVLINK_EN
     usec_service_routine();
 
     MSS_TIM1_clear_irq();

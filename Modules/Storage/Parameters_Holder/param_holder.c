@@ -4,7 +4,7 @@
  *  Created on: 20 Jul 2016
  *      Author: Andrei.Pazniak (krucios@mail.ru)
  */
-
+#ifdef MAVLINK_EN
 #include "param_holder.h"
 
 Onboard_param_t params[ONBOARD_PARAM_COUNT] = {
@@ -51,3 +51,4 @@ void param_queued_send_routine(void) {
         m_parameter_i++;
     }
 }
+#endif // MAVLINK_EN

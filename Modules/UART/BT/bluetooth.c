@@ -7,8 +7,10 @@
 
 #include "bluetooth.h"
 
+#ifdef MAVLINK_EN
 #include <Modules/MAVLink/handlers.h>
 #include <Modules/MAVLink/common/mavlink.h>
+#endif // MAVLINK_EN
 
 UART_instance_t g_bt;
 
@@ -22,13 +24,16 @@ inline void bt_send(const uint8_t* tx_buf, size_t size) {
 
 inline void bt_rx_routine() {
     uint8_t rx_c;
-    mavlink_message_t msg;
-    mavlink_status_t status;
 
     if (UART_get_rx(&g_bt, &rx_c, 1)) {
+#ifdef MAVLINK_EN
+        mavlink_message_t msg;
+        mavlink_status_t status;
+
         if (mavlink_parse_char(MAVLINK_COMM_0, rx_c, &msg, &status)) {
             handle_mavlink_message(&msg);
         }
+#endif // MAVLINK_EN
     }
 }
 
