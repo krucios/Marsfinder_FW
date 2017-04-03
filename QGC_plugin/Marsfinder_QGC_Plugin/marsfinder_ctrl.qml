@@ -188,12 +188,6 @@ FactPanel {
                     onClicked: controller.sendCommand(31012,0, 0, 1, 0, 0, 0, 0, 0, 0)
                 }
             }
-/*
-            TextArea {
-                id: textEdit
-                text: "Your mission here";
-            }
-*/
         }
     }
 }
