@@ -37,6 +37,7 @@ void FabricIrq0_IRQHandler(void) {
  * Service MAVlink protocol message routine
  */
 void Timer1_IRQHandler() {
+#ifdef MAVLINK_EN
     mavlink_message_t msg;
 
     MadgwickAHRSupdateIMU(
@@ -46,7 +47,7 @@ void Timer1_IRQHandler() {
                           params[PARAM_AX].val,
                           params[PARAM_AY].val,
                           params[PARAM_AZ].val);
-#ifdef MAVLINK_EN
+
     mavlink_msg_heartbeat_pack(
             mavlink_system.sysid,
             mavlink_system.compid,

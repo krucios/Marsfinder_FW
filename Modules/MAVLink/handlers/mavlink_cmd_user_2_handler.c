@@ -1,3 +1,5 @@
+#ifdef MAVLINK_EN
+
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/MAVLink/handlers.h>
 #include <Modules/Rover_Control/rover_control.h>
@@ -8,3 +10,5 @@ void handle_mavlink_user_2_cmd(mavlink_command_long_t* cmd) {
     Rover_cmd_t rv_cmd = {dir, units};
     rover_move(rv_cmd);
 }
+
+#endif // MAVLINK_EN

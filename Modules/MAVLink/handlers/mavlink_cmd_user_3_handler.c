@@ -1,3 +1,5 @@
+#ifdef MAVLINK_EN
+
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/MAVLink/handlers.h>
 #include <Modules/Mission_planner/mission_ctrl.h>
@@ -8,3 +10,5 @@ void handle_mavlink_user_3_cmd(mavlink_command_long_t* cmd) {
         mctrl_execute();
     }
 }
+
+#endif // MAVLINK_EN

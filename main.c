@@ -57,6 +57,20 @@ int main(void) {
 
         bt_rx_routine();
         param_queued_send_routine();
+#else
+        bt_polled_tx_string("\n\rHello from DEBUG mode!\n\r\n\r");
+        /* Place your debug code here */
+        uint8_t us_buf[1024];
+        uint32_t us_len;
+
+        us_len = us_get_rx(us_buf, 1024);
+        for (uint8_t i = 0; i < us_len; i++) {
+            if (us_buf[i] != 0xA) {
+                us_buf[i] += 32; // For prevent sending control characters
+            }
+        }
+        bt_send(us_buf, us_len);
+        bt_polled_tx_string("\n\r");
 #endif // MAVLINK_EN
     }
     return (0);

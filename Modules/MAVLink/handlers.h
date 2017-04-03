@@ -8,6 +8,7 @@
 #ifndef MODULES_MAVLINK_HANDLERS_H_
 #define MODULES_MAVLINK_HANDLERS_H_
 
+#ifdef MAVLINK_EN
 #include "common/mavlink.h"
 #include "mavlink_helpers.h"
 
@@ -20,5 +21,6 @@ void handle_mavlink_user_1_cmd(mavlink_command_long_t* cmd);
 void handle_mavlink_user_2_cmd(mavlink_command_long_t* cmd);
 void handle_mavlink_user_3_cmd(mavlink_command_long_t* cmd);
 void handle_mavlink_message(mavlink_message_t* msg);
+#endif // MAVLINK_EN
 
 #endif /* MODULES_MAVLINK_HANDLERS_H_ */

@@ -5,6 +5,8 @@
  *      Author: Andrei.PAzniak (krucios@mail.ru)
  */
 
+#ifdef MAVLINK_EN
+
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/MAVLink/handlers.h>
 
@@ -104,3 +106,5 @@ void handle_mavlink_message(mavlink_message_t* msg) {
         } break;
     }
 }
+
+#endif // MAVLINK_EN

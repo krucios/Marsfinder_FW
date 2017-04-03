@@ -11,7 +11,8 @@
 #include <MC_hw_platform.h>
 #include <drivers/CoreUARTapb/core_uart_apb.h>
 
-#include "BT/bluetooth.h"
+#include <Modules/UART/BT/bluetooth.h>
+#include <Modules/UART/US/us.h>
 
 #define BAUD_VALUE_115200   26
 
