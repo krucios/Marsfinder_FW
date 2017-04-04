@@ -17,6 +17,9 @@
 #include <Modules/MAVLink/common/mavlink.h>
 #include <Modules/MAVLink/handlers.h>
 #include <Modules/MAVLink/system.h>
+#else
+#include <stdlib.h>
+#include <stdio.h>
 #endif // MAVLINK_EN
 #include <Modules/Storage/Parameters_Holder/param_holder.h>
 
@@ -33,6 +36,14 @@ void setup(void);
 int main(void) {
     // Modules initialisation
     setup();
+
+    uint8_t us_buf[1024];
+    uint32_t us_len;
+
+    uint8_t dist_str[8];
+    uint8_t angl_str[8];
+    uint8_t res_str[20];
+    uint8_t str_len;
 
     while (1) {
         delay(1000);
@@ -58,19 +69,24 @@ int main(void) {
         bt_rx_routine();
         param_queued_send_routine();
 #else
-        bt_polled_tx_string("\n\rHello from DEBUG mode!\n\r\n\r");
         /* Place your debug code here */
-        uint8_t us_buf[1024];
-        uint32_t us_len;
+        us_len = us_get_rx((us_buf + us_len), 128);
+        if (us_len > 3) {
+            for (uint8_t i = 3; i < us_len;) { // 3 - length of message from US
+                if (us_buf[i] == 0xA) {
+                    uint16_t dist = (us_buf[i - 3] << 8) | us_buf[i - 2];
+                    uint8_t  angl = us_buf[i - 1];
 
-        us_len = us_get_rx(us_buf, 1024);
-        for (uint8_t i = 0; i < us_len; i++) {
-            if (us_buf[i] != 0xA) {
-                us_buf[i] += 32; // For prevent sending control characters
+                    sprintf(res_str, "%0d\t%0d\r\n", dist, angl);
+                    bt_polled_tx_string(res_str);
+
+                    i += 3;
+                } else {
+                    i++;
+                }
             }
+            us_len = 0;
         }
-        bt_send(us_buf, us_len);
-        bt_polled_tx_string("\n\r");
 #endif // MAVLINK_EN
     }
     return (0);
@@ -85,6 +101,9 @@ void setup() {
     timer_mss1_start();
 #ifdef MAVLINK_EN
     mavlink_sys_update(MAV_MODE_AUTO_ARMED, MAV_STATE_STANDBY);
+#else
+    bt_polled_tx_string("\n\rHello from Marsfinder_FW mode!\n\r\n\r");
+    us_polled_tx_string("w"); // ASCII 0x77
 #endif // MAVLINK_EN
 
 #ifdef MPU6050_ENABLED
