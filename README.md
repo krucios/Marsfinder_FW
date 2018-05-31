@@ -3,6 +3,7 @@ The Microsemi SmartFusion2 projects for Rover
 
 ## Участники
 1. Горудко Виталий
+2. Лычковский Андрей
 3. Позняк Андрей
 
 ## Rover Kit (наземный робот)
