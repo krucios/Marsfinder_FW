@@ -93,6 +93,8 @@ int main(void) {
 }
 
 void setup() {
+    uint8_t retcode;         // variable to store retcode
+    uint8_t msg_str[40];     // variable to store a message string
     rover_init();
     mctrl_init();
     timers_init();
@@ -109,17 +111,18 @@ void setup() {
 #ifdef MPU6050_ENABLED
     mpu6050_init();
 #ifdef MPU6050_SELFTEST
-    if (mpu6050_selfTest()) {
+    retcode = mpu6050_selfTest(); //store retcode from selfTest function
+    if (retcode) {                //check retcode
 #ifdef MAVLINK_EN
         mavlink_message_t msg;
 
-        // TODO retcode into msg
+        sprintf(msg_str, "MPU6050 SELFTEST FAILED. CODE: %0d", retcode);   //create c-string with retcode
         mavlink_msg_statustext_pack(
                 mavlink_system.sysid,
                 mavlink_system.compid,
                 &msg,
                 MAV_SEVERITY_CRITICAL,
-                "MPU6050 SELFTEST FAILED");
+                msdg_str);        //use previously prepared c-string instead of string literal
         mavlink_send_msg(&msg);
 #endif // MAVLINK_EN
     }
@@ -130,17 +133,18 @@ void setup() {
 #ifdef HMC_ENABLED
     HMC_init();
 #ifdef HMC_SELFTEST
-    if (HMC_self_test()) {
+    retcode = HMC_self_test();  //store hmc_retcode from selfTest function
+    if (retcode) {              //check hmc_retcode
 #ifdef MAVLINK_EN
         mavlink_message_t msg;
 
-        // TODO retcode into msg
+        sprintf(hmc_msg_str, "HMC SELFTEST FAILED. CODE: %0d", retcode);  //create c-string with retcode
         mavlink_msg_statustext_pack(
                 mavlink_system.sysid,
                 mavlink_system.compid,
                 &msg,
                 MAV_SEVERITY_CRITICAL,
-                "HMC SELFTEST FAILED");
+                msg_str);      //use previously prepared c-string instead of string literal
         mavlink_send_msg(&msg);
 #endif // MAVLINK_EN
     }
